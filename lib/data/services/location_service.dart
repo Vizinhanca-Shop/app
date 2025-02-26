@@ -59,7 +59,7 @@ class LocationServiceImpl implements LocationService {
         longitude: lng.toString(),
         name: place.subLocality ?? '',
         displayName: place.subLocality ?? '',
-        city: place.locality,
+        city: place.subAdministrativeArea ?? '',
         state: place.administrativeArea,
         country: place.country,
       );
