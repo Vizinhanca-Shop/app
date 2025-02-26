@@ -216,30 +216,45 @@ class _ProductViewState extends State<ProductView> {
           );
         },
       ),
-      bottomNavigationBar: Container(
-        padding: const EdgeInsets.only(
-          left: 20,
-          right: 20,
-          bottom: 24,
-          top: 16,
-        ),
-        child: ElevatedButton.icon(
-          onPressed: () {
-            _handleContactSeller(number: widget.viewModel.product.seller.phone);
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primary,
-            minimumSize: const Size(double.infinity, 48),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
+      bottomNavigationBar: ListenableBuilder(
+        listenable: widget.viewModel,
+        builder: (context, snapshot) {
+          if (widget.viewModel.isLoading) {
+            return const SizedBox.shrink();
+          }
+
+          return Container(
+            padding: const EdgeInsets.only(
+              left: 20,
+              right: 20,
+              bottom: 24,
+              top: 16,
             ),
-          ),
-          icon: Image.asset('assets/icons/whatsapp.png', width: 24, height: 24),
-          label: Text(
-            'Entrar em contato',
-            style: GoogleFonts.sora(fontSize: 16, color: Colors.white),
-          ),
-        ),
+            child: ElevatedButton.icon(
+              onPressed: () {
+                _handleContactSeller(
+                  number: widget.viewModel.product.seller.phone,
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                minimumSize: const Size(double.infinity, 48),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              icon: Image.asset(
+                'assets/icons/whatsapp.png',
+                width: 24,
+                height: 24,
+              ),
+              label: Text(
+                'Entrar em contato',
+                style: GoogleFonts.sora(fontSize: 16, color: Colors.white),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
