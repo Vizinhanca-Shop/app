@@ -3,6 +3,8 @@ import 'package:vizinhanca_shop/di/locator.dart';
 import 'package:vizinhanca_shop/features/address/viewmodels/address_view_model.dart';
 import 'package:vizinhanca_shop/features/address/views/address_search_view.dart';
 import 'package:vizinhanca_shop/features/home/views/home_view.dart';
+import 'package:vizinhanca_shop/features/product/viewmodels/product_view_model.dart';
+import 'package:vizinhanca_shop/features/product/views/product_view.dart';
 
 class AppRoutes {
   static final GlobalKey<NavigatorState> navigatorKey =
@@ -11,7 +13,8 @@ class AppRoutes {
   static const String login = '/login';
   static const String register = '/register';
   static const String home = '/home';
-  static const String addressSearch = '/addressSearch';
+  static const String addressSearch = '/address-search';
+  static const String product = '/product';
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     return PageRouteBuilder<void>(
@@ -43,6 +46,11 @@ class AppRoutes {
             return HomeView(addressViewModel: locator<AddressViewModel>());
           case addressSearch:
             return AddressSearchView(viewModel: locator<AddressViewModel>());
+          case product:
+            return ProductView(
+              arguments: settings.arguments as ProductViewArguments,
+              viewModel: locator<ProductViewModel>(),
+            );
           default:
             return Scaffold(
               body: Center(
