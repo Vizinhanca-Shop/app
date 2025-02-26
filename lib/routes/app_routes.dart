@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:vizinhanca_shop/di/locator.dart';
 import 'package:vizinhanca_shop/features/address/viewmodels/address_view_model.dart';
 import 'package:vizinhanca_shop/features/address/views/address_search_view.dart';
+import 'package:vizinhanca_shop/features/home/viewmodels/home_view_model.dart';
 import 'package:vizinhanca_shop/features/home/views/home_view.dart';
+import 'package:vizinhanca_shop/features/main/viewmodels/main_view_model.dart';
+import 'package:vizinhanca_shop/features/main/views/main_view.dart';
 import 'package:vizinhanca_shop/features/product/viewmodels/product_view_model.dart';
 import 'package:vizinhanca_shop/features/product/views/product_view.dart';
 
@@ -12,6 +15,7 @@ class AppRoutes {
 
   static const String login = '/login';
   static const String register = '/register';
+  static const String main = '/main';
   static const String home = '/home';
   static const String addressSearch = '/address-search';
   static const String product = '/product';
@@ -42,8 +46,13 @@ class AppRoutes {
             return Scaffold(body: Center(child: Text('Login')));
           case register:
             return Scaffold(body: Center(child: Text('Register')));
+          case main:
+            return MainView(viewModel: locator<MainViewModel>());
           case home:
-            return HomeView(addressViewModel: locator<AddressViewModel>());
+            return HomeView(
+              homeViewModel: locator<HomeViewModel>(),
+              addressViewModel: locator<AddressViewModel>(),
+            );
           case addressSearch:
             return AddressSearchView(viewModel: locator<AddressViewModel>());
           case product:
