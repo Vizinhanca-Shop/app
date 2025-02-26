@@ -47,12 +47,15 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
                     ),
                   ),
                 ),
-            Text(
-              title,
-              style: GoogleFonts.sora(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: Colors.grey[800],
+            Flexible(
+              child: Text(
+                title,
+                style: GoogleFonts.sora(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.grey[800],
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             const SizedBox(width: 40),
