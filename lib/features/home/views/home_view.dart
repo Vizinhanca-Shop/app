@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vizinhanca_shop/features/address/viewmodels/address_view_model.dart';
+import 'package:vizinhanca_shop/features/home/viewmodels/home_view_model.dart';
 import 'package:vizinhanca_shop/features/home/views/widgets/filters.dart';
-import 'package:vizinhanca_shop/features/product/views/product_view.dart';
+import 'package:vizinhanca_shop/features/home/views/widgets/product_preview.dart';
 import 'package:vizinhanca_shop/routes/app_routes.dart';
 import 'package:vizinhanca_shop/theme/app_colors.dart';
 
 class HomeView extends StatefulWidget {
+  final HomeViewModel homeViewModel;
   final AddressViewModel addressViewModel;
 
-  const HomeView({super.key, required this.addressViewModel});
+  const HomeView({
+    super.key,
+    required this.homeViewModel,
+    required this.addressViewModel,
+  });
 
   @override
   State<HomeView> createState() => _HomeViewState();
@@ -28,6 +34,7 @@ class _HomeViewState extends State<HomeView> {
   void initState() {
     super.initState();
     widget.addressViewModel.setInitialAddress();
+    widget.homeViewModel.handleGetProducts();
   }
 
   @override
@@ -76,9 +83,6 @@ class _HomeViewState extends State<HomeView> {
                                   Row(
                                     children: [
                                       SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width -
-                                            140,
                                         child: Text(
                                           widget
                                                       .addressViewModel
@@ -200,110 +204,39 @@ class _HomeViewState extends State<HomeView> {
               ),
             ),
             const SizedBox(height: 20),
-            Expanded(
-              child: GridView.builder(
-                padding: const EdgeInsets.all(6),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 0.7,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                ),
-                itemCount: 10,
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pushNamed(
-                        AppRoutes.product,
-                        arguments: ProductViewArguments(
-                          productId: '1',
-                          name: 'Produto $index',
-                        ),
-                      );
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8.0),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey[300]!,
-                            blurRadius: 8.0,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(8.0),
-                                  topRight: Radius.circular(8.0),
-                                ),
-                                image: const DecorationImage(
-                                  image: NetworkImage(
-                                    'https://www.sabornamesa.com.br/media/k2/items/cache/f59fd3a46f2adbbd9dd6269010353971_XL.jpg',
-                                  ),
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Produto $index',
-                                  style: GoogleFonts.sora(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  'Descrição do produto $index',
-                                  style: GoogleFonts.sora(color: Colors.grey),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  'R\$ 100,00',
-                                  style: GoogleFonts.sora(color: Colors.black),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+            ListenableBuilder(
+              listenable: widget.homeViewModel,
+              builder: (context, snapshot) {
+                if (widget.homeViewModel.isLoading) {
+                  return Expanded(
+                    child: const Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation(AppColors.primary),
                       ),
                     ),
                   );
-                },
-              ),
+                }
+
+                return Expanded(
+                  child: GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          childAspectRatio: 0.8,
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                        ),
+                    itemCount: widget.homeViewModel.products.length,
+                    itemBuilder: (context, index) {
+                      final product = widget.homeViewModel.products[index];
+                      return ProductPreview(product: product);
+                    },
+                  ),
+                );
+              },
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.white,
-        selectedItemColor: AppColors.primary,
-        unselectedItemColor: Colors.grey,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_rounded),
-            label: 'Início',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_rounded),
-            label: 'Perfil',
-          ),
-        ],
       ),
     );
   }
