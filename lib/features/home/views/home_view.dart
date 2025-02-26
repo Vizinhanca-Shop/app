@@ -74,18 +74,24 @@ class _HomeViewState extends State<HomeView> {
                                 children: [
                                   Row(
                                     children: [
-                                      Text(
-                                        widget
-                                                    .addressViewModel
-                                                    .selectedAddress
-                                                    ?.name !=
-                                                null
-                                            ? '${widget.addressViewModel.selectedAddress?.name}'
-                                            : 'Selecione um endereço',
-                                        style: GoogleFonts.sora(
-                                          color: Colors.grey[800],
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600,
+                                      SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width -
+                                            140,
+                                        child: Text(
+                                          widget
+                                                      .addressViewModel
+                                                      .selectedAddress
+                                                      ?.name !=
+                                                  null
+                                              ? '${widget.addressViewModel.selectedAddress?.name}'
+                                              : 'Selecione um endereço',
+                                          style: GoogleFonts.sora(
+                                            color: Colors.grey[800],
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
                                       const SizedBox(width: 4),
@@ -228,7 +234,7 @@ class _HomeViewState extends State<HomeView> {
                               ),
                               image: const DecorationImage(
                                 image: NetworkImage(
-                                  'https://loja.mueller.ind.br/media/wysiwyg/pao-caseiro-facil1.jpg',
+                                  'https://www.sabornamesa.com.br/media/k2/items/cache/f59fd3a46f2adbbd9dd6269010353971_XL.jpg',
                                 ),
                                 fit: BoxFit.cover,
                               ),
