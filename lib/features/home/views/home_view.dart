@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vizinhanca_shop/features/address/viewmodels/address_view_model.dart';
 import 'package:vizinhanca_shop/features/home/views/widgets/filters.dart';
+import 'package:vizinhanca_shop/features/product/views/product_view.dart';
 import 'package:vizinhanca_shop/routes/app_routes.dart';
 import 'package:vizinhanca_shop/theme/app_colors.dart';
 
@@ -37,7 +38,7 @@ class _HomeViewState extends State<HomeView> {
         backgroundColor: Colors.white,
         leadingWidth: MediaQuery.of(context).size.width,
         scrolledUnderElevation: 0,
-        toolbarHeight: 154,
+        toolbarHeight: 160,
         leading: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -119,7 +120,7 @@ class _HomeViewState extends State<HomeView> {
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 16),
               TextField(
                 decoration: InputDecoration(
                   prefixIcon: const Icon(Icons.search, color: Colors.grey),
@@ -167,7 +168,7 @@ class _HomeViewState extends State<HomeView> {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Column(
           children: [
             SizedBox(
@@ -210,66 +211,77 @@ class _HomeViewState extends State<HomeView> {
                 ),
                 itemCount: 10,
                 itemBuilder: (context, index) {
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey[300]!,
-                          blurRadius: 8.0,
-                          offset: const Offset(0, 2),
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pushNamed(
+                        AppRoutes.product,
+                        arguments: ProductViewArguments(
+                          productId: '1',
+                          name: 'Produto $index',
                         ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(8.0),
-                                topRight: Radius.circular(8.0),
-                              ),
-                              image: const DecorationImage(
-                                image: NetworkImage(
-                                  'https://www.sabornamesa.com.br/media/k2/items/cache/f59fd3a46f2adbbd9dd6269010353971_XL.jpg',
+                      );
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey[300]!,
+                            blurRadius: 8.0,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(8.0),
+                                  topRight: Radius.circular(8.0),
                                 ),
-                                fit: BoxFit.cover,
+                                image: const DecorationImage(
+                                  image: NetworkImage(
+                                    'https://www.sabornamesa.com.br/media/k2/items/cache/f59fd3a46f2adbbd9dd6269010353971_XL.jpg',
+                                  ),
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Produto $index',
-                                style: GoogleFonts.sora(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 16,
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Produto $index',
+                                  style: GoogleFonts.sora(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 16,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                'Descrição do produto $index',
-                                style: GoogleFonts.sora(color: Colors.grey),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                'R\$ 100,00',
-                                style: GoogleFonts.sora(color: Colors.black),
-                              ),
-                            ],
+                                const SizedBox(height: 4),
+                                Text(
+                                  'Descrição do produto $index',
+                                  style: GoogleFonts.sora(color: Colors.grey),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'R\$ 100,00',
+                                  style: GoogleFonts.sora(color: Colors.black),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   );
                 },
