@@ -7,6 +7,8 @@ import 'package:vizinhanca_shop/data/services/auth_service.dart';
 import 'package:vizinhanca_shop/data/services/local_storage_service.dart';
 import 'package:vizinhanca_shop/data/services/location_service.dart';
 import 'package:vizinhanca_shop/features/address/viewmodels/address_view_model.dart';
+import 'package:vizinhanca_shop/features/home/viewmodels/home_view_model.dart';
+import 'package:vizinhanca_shop/features/main/viewmodels/main_view_model.dart';
 import 'package:vizinhanca_shop/features/product/viewmodels/product_view_model.dart';
 import 'package:vizinhanca_shop/http/http_client.dart';
 
@@ -46,7 +48,11 @@ Future<void> setupLocator() async {
       locationService: locator<LocationService>(),
     ),
   );
+  locator.registerLazySingleton<HomeViewModel>(
+    () => HomeViewModel(repository: locator<ProductRepository>()),
+  );
   locator.registerLazySingleton<ProductViewModel>(
     () => ProductViewModel(repository: locator<ProductRepository>()),
   );
+  locator.registerLazySingleton<MainViewModel>(() => MainViewModel());
 }
