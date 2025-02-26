@@ -45,12 +45,12 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                   label: 'Início',
                 ),
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.person_rounded),
-                  label: 'Perfil',
-                ),
-                BottomNavigationBarItem(
                   icon: Icon(Icons.shopping_cart_rounded),
                   label: 'Meus anúncios',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.person_rounded),
+                  label: 'Perfil',
                 ),
               ],
             );
