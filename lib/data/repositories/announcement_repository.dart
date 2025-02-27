@@ -1,18 +1,18 @@
 import 'package:vizinhanca_shop/config/app_config.dart';
-import 'package:vizinhanca_shop/data/models/product_model.dart';
+import 'package:vizinhanca_shop/data/models/announcement_model.dart';
 import 'package:vizinhanca_shop/data/models/user_model.dart';
 import 'package:vizinhanca_shop/http/http_client.dart';
 
-class ProductRepository {
+class AnnouncementRepository {
   final HttpClient client;
   final AppConfig appConfig;
 
-  ProductRepository({required this.client, required this.appConfig});
+  AnnouncementRepository({required this.client, required this.appConfig});
 
   String get baseUrl => appConfig.baseUrl;
 
-  final products = [
-    ProductModel(
+  final announcements = [
+    AnnouncementModel(
       id: '1',
       name: 'Bolo de Cenoura com Chocolate',
       price: 120.0,
@@ -33,7 +33,7 @@ class ProductRepository {
       category: 'Alimentos e Bebidas',
     ),
 
-    ProductModel(
+    AnnouncementModel(
       id: '2',
       name: 'Açaí na Tigela 500ml',
       price: 150.0,
@@ -54,7 +54,7 @@ class ProductRepository {
       category: 'Alimentos e Bebidas',
     ),
 
-    ProductModel(
+    AnnouncementModel(
       id: '3',
       name: 'Coxinha de Frango com Catupiry (Unidade)',
       price: 50.0,
@@ -75,7 +75,7 @@ class ProductRepository {
       category: 'Alimentos e Bebidas',
     ),
 
-    ProductModel(
+    AnnouncementModel(
       id: '4',
       name: 'Smartphone XYZ Pro 128GB',
       price: 2999.0,
@@ -96,7 +96,7 @@ class ProductRepository {
       category: 'Eletrônicos e Acessórios',
     ),
 
-    ProductModel(
+    AnnouncementModel(
       id: '5',
       name: 'Corte de Cabelo Masculino',
       price: 80.0,
@@ -117,7 +117,7 @@ class ProductRepository {
       category: 'Beleza e Estética',
     ),
 
-    ProductModel(
+    AnnouncementModel(
       id: '6',
       name: 'Limpeza de Pele Profunda',
       price: 180.0,
@@ -138,7 +138,7 @@ class ProductRepository {
       category: 'Beleza e Estética',
     ),
 
-    ProductModel(
+    AnnouncementModel(
       id: '7',
       name: 'Relógio Smartwatch Fitness',
       price: 450.0,
@@ -159,7 +159,7 @@ class ProductRepository {
       category: 'Eletrônicos e Acessórios',
     ),
 
-    ProductModel(
+    AnnouncementModel(
       id: '8',
       name: 'Brinquedo Educativo de Madeira',
       price: 90.0,
@@ -180,7 +180,7 @@ class ProductRepository {
       category: 'Infantil',
     ),
 
-    ProductModel(
+    AnnouncementModel(
       id: '9',
       name: 'Kit de Temperos Naturais',
       price: 70.0,
@@ -202,7 +202,7 @@ class ProductRepository {
     ),
   ];
 
-  Future<List<ProductModel>> fetchProducts() async {
+  Future<List<AnnouncementModel>> fetchAnnouncements() async {
     // final url = Uri.parse('$baseUrl/products');
 
     try {
@@ -218,13 +218,13 @@ class ProductRepository {
 
       await Future.delayed(Duration(seconds: 2));
 
-      return products;
+      return announcements;
     } catch (e) {
       return [];
     }
   }
 
-  Future<ProductModel> fetchProduct(String productId) async {
+  Future<AnnouncementModel> fetchAnnouncement(String productId) async {
     // final url = Uri.parse('$baseUrl/products/$productId');
 
     try {
@@ -238,9 +238,9 @@ class ProductRepository {
 
       await Future.delayed(Duration(seconds: 2));
 
-      return products.firstWhere((product) => product.id == productId);
+      return announcements.firstWhere((product) => product.id == productId);
     } catch (e) {
-      return ProductModel.empty();
+      return AnnouncementModel.empty();
     }
   }
 }

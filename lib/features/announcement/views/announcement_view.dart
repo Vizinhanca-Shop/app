@@ -1,35 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:vizinhanca_shop/features/product/viewmodels/product_view_model.dart';
-import 'package:vizinhanca_shop/features/product/views/widgets/images_carousel.dart';
+import 'package:vizinhanca_shop/features/announcement/viewmodels/announcement_view_model.dart';
+import 'package:vizinhanca_shop/features/announcement/views/widgets/images_carousel.dart';
 import 'package:vizinhanca_shop/routes/app_routes.dart';
 import 'package:vizinhanca_shop/shared/header.dart';
 import 'package:vizinhanca_shop/theme/app_colors.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:url_launcher/url_launcher.dart';
 
-class ProductViewArguments {
-  final String productId;
+class AnnouncementViewArguments {
+  final String announcementId;
   final String name;
 
-  ProductViewArguments({required this.productId, required this.name});
+  AnnouncementViewArguments({required this.announcementId, required this.name});
 }
 
-class ProductView extends StatefulWidget {
-  final ProductViewArguments arguments;
-  final ProductViewModel viewModel;
+class AnnouncementView extends StatefulWidget {
+  final AnnouncementViewArguments arguments;
+  final AnnouncementViewModel viewModel;
 
-  const ProductView({
+  const AnnouncementView({
     super.key,
     required this.arguments,
     required this.viewModel,
   });
 
   @override
-  State<ProductView> createState() => _ProductViewState();
+  State<AnnouncementView> createState() => _AnnouncementViewState();
 }
 
-class _ProductViewState extends State<ProductView> {
+class _AnnouncementViewState extends State<AnnouncementView> {
   void _handleContactSeller({required String number}) async {
     final cleanNumber = number.replaceAll(RegExp(r'[^\d+]'), '');
 
@@ -73,7 +73,7 @@ class _ProductViewState extends State<ProductView> {
   @override
   void initState() {
     super.initState();
-    widget.viewModel.handleGetProduct(widget.arguments.productId);
+    widget.viewModel.handleGetAnnouncement(widget.arguments.announcementId);
   }
 
   @override
@@ -96,7 +96,7 @@ class _ProductViewState extends State<ProductView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ImagesCarousel(images: widget.viewModel.product.images),
+                ImagesCarousel(images: widget.viewModel.announcement.images),
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 20,
@@ -112,7 +112,7 @@ class _ProductViewState extends State<ProductView> {
                             intl.NumberFormat.currency(
                               locale: 'pt_BR',
                               symbol: 'R\$',
-                            ).format(widget.viewModel.product.price),
+                            ).format(widget.viewModel.announcement.price),
                             style: GoogleFonts.sora(
                               fontSize: 24,
                               color: Colors.grey[800],
@@ -129,7 +129,7 @@ class _ProductViewState extends State<ProductView> {
                               borderRadius: BorderRadius.circular(16),
                             ),
                             child: Text(
-                              widget.viewModel.product.category,
+                              widget.viewModel.announcement.category,
                               style: GoogleFonts.sora(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
@@ -141,12 +141,12 @@ class _ProductViewState extends State<ProductView> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        widget.viewModel.product.name,
+                        widget.viewModel.announcement.name,
                         style: GoogleFonts.sora(fontSize: 16),
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        widget.viewModel.product.description,
+                        widget.viewModel.announcement.description,
                         style: GoogleFonts.sora(
                           fontSize: 16,
                           color: Colors.grey[600],
@@ -160,7 +160,7 @@ class _ProductViewState extends State<ProductView> {
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
-                              widget.viewModel.product.seller.address ??
+                              widget.viewModel.announcement.seller.address ??
                                   'Endereço não informado',
                               style: GoogleFonts.sora(
                                 fontSize: 16,
@@ -186,12 +186,12 @@ class _ProductViewState extends State<ProductView> {
                           CircleAvatar(
                             radius: 20,
                             backgroundImage: NetworkImage(
-                              widget.viewModel.product.seller.avatar,
+                              widget.viewModel.announcement.seller.avatar,
                             ),
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            widget.viewModel.product.seller.name,
+                            widget.viewModel.announcement.seller.name,
                             style: GoogleFonts.sora(fontSize: 16),
                           ),
                         ],
@@ -202,7 +202,7 @@ class _ProductViewState extends State<ProductView> {
                           Icon(Icons.phone, color: Colors.green),
                           const SizedBox(width: 8),
                           Text(
-                            widget.viewModel.product.seller.phone,
+                            widget.viewModel.announcement.seller.phone,
                             style: GoogleFonts.sora(fontSize: 16),
                           ),
                         ],
@@ -233,7 +233,7 @@ class _ProductViewState extends State<ProductView> {
             child: ElevatedButton.icon(
               onPressed: () {
                 _handleContactSeller(
-                  number: widget.viewModel.product.seller.phone,
+                  number: widget.viewModel.announcement.seller.phone,
                 );
               },
               style: ElevatedButton.styleFrom(

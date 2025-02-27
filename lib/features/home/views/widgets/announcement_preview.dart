@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:vizinhanca_shop/data/models/product_model.dart';
-import 'package:vizinhanca_shop/features/product/views/product_view.dart';
+import 'package:vizinhanca_shop/data/models/announcement_model.dart';
+import 'package:vizinhanca_shop/features/announcement/views/announcement_view.dart';
 import 'package:vizinhanca_shop/routes/app_routes.dart';
 
-class ProductPreview extends StatelessWidget {
-  const ProductPreview({super.key, required this.product});
+class AnnouncementPreview extends StatelessWidget {
+  const AnnouncementPreview({super.key, required this.announcement});
 
-  final ProductModel product;
+  final AnnouncementModel announcement;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
         Navigator.of(context).pushNamed(
-          AppRoutes.product,
-          arguments: ProductViewArguments(
-            productId: product.id,
-            name: product.name,
+          AppRoutes.announcement,
+          arguments: AnnouncementViewArguments(
+            announcementId: announcement.id,
+            name: announcement.name,
           ),
         );
       },
@@ -36,7 +36,7 @@ class ProductPreview extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: const BorderRadius.all(Radius.circular(8)),
                     image: DecorationImage(
-                      image: NetworkImage(product.images.first),
+                      image: NetworkImage(announcement.images.first),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -49,11 +49,13 @@ class ProductPreview extends StatelessWidget {
                       children: [
                         CircleAvatar(
                           radius: 14,
-                          backgroundImage: NetworkImage(product.seller.avatar),
+                          backgroundImage: NetworkImage(
+                            announcement.seller.avatar,
+                          ),
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          product.seller.name,
+                          announcement.seller.name,
                           style: GoogleFonts.sora(
                             fontSize: 12,
                             color: Colors.grey[600],
@@ -64,7 +66,7 @@ class ProductPreview extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      product.name,
+                      announcement.name,
                       style: GoogleFonts.sora(
                         color: Colors.grey[800],
                         fontWeight: FontWeight.w500,

@@ -1,6 +1,6 @@
 import 'package:vizinhanca_shop/data/models/user_model.dart';
 
-class ProductModel {
+class AnnouncementModel {
   final String id;
   final String name;
   final String description;
@@ -9,7 +9,7 @@ class ProductModel {
   final UserModel seller;
   final String category;
 
-  ProductModel({
+  AnnouncementModel({
     required this.id,
     required this.name,
     required this.description,
@@ -19,8 +19,8 @@ class ProductModel {
     required this.category,
   });
 
-  factory ProductModel.fromJson(Map<String, dynamic> json) {
-    return ProductModel(
+  factory AnnouncementModel.fromJson(Map<String, dynamic> json) {
+    return AnnouncementModel(
       id: json['id'],
       name: json['name'],
       description: json['description'],
@@ -43,8 +43,8 @@ class ProductModel {
     };
   }
 
-  factory ProductModel.empty() {
-    return ProductModel(
+  factory AnnouncementModel.empty() {
+    return AnnouncementModel(
       id: '',
       name: '',
       description: '',

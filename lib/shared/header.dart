@@ -29,7 +29,7 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             hideBackButton
-                ? const SizedBox()
+                ? const SizedBox(width: 40)
                 : SizedBox(
                   width: 40,
                   child: IconButton(

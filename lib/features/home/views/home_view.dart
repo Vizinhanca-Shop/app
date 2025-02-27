@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:vizinhanca_shop/features/address/viewmodels/address_view_model.dart';
 import 'package:vizinhanca_shop/features/home/viewmodels/home_view_model.dart';
 import 'package:vizinhanca_shop/features/home/views/widgets/filters.dart';
-import 'package:vizinhanca_shop/features/home/views/widgets/product_preview.dart';
+import 'package:vizinhanca_shop/features/home/views/widgets/announcement_preview.dart';
 import 'package:vizinhanca_shop/routes/app_routes.dart';
 import 'package:vizinhanca_shop/theme/app_colors.dart';
 
@@ -34,7 +34,7 @@ class _HomeViewState extends State<HomeView> {
   void initState() {
     super.initState();
     widget.addressViewModel.setInitialAddress();
-    widget.homeViewModel.handleGetProducts();
+    widget.homeViewModel.handleGetAnnouncements();
   }
 
   @override
@@ -226,10 +226,11 @@ class _HomeViewState extends State<HomeView> {
                           crossAxisSpacing: 16,
                           mainAxisSpacing: 16,
                         ),
-                    itemCount: widget.homeViewModel.products.length,
+                    itemCount: widget.homeViewModel.announcements.length,
                     itemBuilder: (context, index) {
-                      final product = widget.homeViewModel.products[index];
-                      return ProductPreview(product: product);
+                      final announcement =
+                          widget.homeViewModel.announcements[index];
+                      return AnnouncementPreview(announcement: announcement);
                     },
                   ),
                 );
