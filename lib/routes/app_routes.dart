@@ -8,6 +8,8 @@ import 'package:vizinhanca_shop/features/main/viewmodels/main_view_model.dart';
 import 'package:vizinhanca_shop/features/main/views/main_view.dart';
 import 'package:vizinhanca_shop/features/announcement/viewmodels/announcement_view_model.dart';
 import 'package:vizinhanca_shop/features/announcement/views/announcement_view.dart';
+import 'package:vizinhanca_shop/features/my_announcement/viewmodels/my_announcements_view_model.dart';
+import 'package:vizinhanca_shop/features/my_announcement/views/new_announcement_view.dart';
 
 class AppRoutes {
   static final GlobalKey<NavigatorState> navigatorKey =
@@ -19,6 +21,7 @@ class AppRoutes {
   static const String home = '/home';
   static const String addressSearch = '/address-search';
   static const String announcement = '/announcement';
+  static const String newAnnouncement = '/new-announcement';
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     return PageRouteBuilder<void>(
@@ -59,6 +62,10 @@ class AppRoutes {
             return AnnouncementView(
               arguments: settings.arguments as AnnouncementViewArguments,
               viewModel: locator<AnnouncementViewModel>(),
+            );
+          case newAnnouncement:
+            return NewAnnouncementView(
+              viewModel: locator<MyAnnouncementsViewModel>(),
             );
           default:
             return Scaffold(

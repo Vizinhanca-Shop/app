@@ -82,7 +82,10 @@ class _HomeViewState extends State<HomeView> {
                                 children: [
                                   Row(
                                     children: [
-                                      SizedBox(
+                                      ConstrainedBox(
+                                        constraints: BoxConstraints(
+                                          maxWidth: 240,
+                                        ),
                                         child: Text(
                                           widget
                                                       .addressViewModel

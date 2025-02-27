@@ -45,7 +45,7 @@ class AnnouncementRepository {
         'https://amopaocaseiro.com.br/wp-content/uploads/2019/12/pao-de-forma-caseiro_02.jpg',
       ],
       seller: UserModel(
-        id: '3',
+        id: '2',
         name: 'Açaí Tropical',
         phone: '48 97777-7777',
         address: 'Rua do Comércio, 789',
@@ -66,7 +66,7 @@ class AnnouncementRepository {
         'https://amopaocaseiro.com.br/wp-content/uploads/2019/12/pao-de-forma-caseiro_02.jpg',
       ],
       seller: UserModel(
-        id: '4',
+        id: '2',
         name: 'Lanchonete Express',
         phone: '48 96666-6666',
         address: 'Praça dos Sabores, 101',
@@ -241,6 +241,30 @@ class AnnouncementRepository {
       return announcements.firstWhere((product) => product.id == productId);
     } catch (e) {
       return AnnouncementModel.empty();
+    }
+  }
+
+  Future<List<AnnouncementModel>> fetchUserAnnouncements(String userId) async {
+    // final url = Uri.parse('$baseUrl/products?sellerId=$userId');
+
+    try {
+      // final response = await client.get(url);
+      // if (response.statusCode == 200) {
+      //   final decodedBody = json.decode(response.body);
+      //   return List<ProductModel>.from(
+      //     decodedBody.map((product) => ProductModel.fromJson(product)),
+      //   );
+      // } else {
+      //   return [];
+      // }
+
+      await Future.delayed(Duration(seconds: 2));
+
+      return announcements
+          .where((product) => product.seller.id == userId)
+          .toList();
+    } catch (e) {
+      return [];
     }
   }
 }
