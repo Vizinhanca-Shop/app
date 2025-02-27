@@ -24,6 +24,12 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Permite que o aplicativo acesse sua localização para que possamos mostrar produtos próximos a você.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Permite que o aplicativo acesse sua galeria de fotos para que você possa enviar fotos de seus anúncios.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Permite que o aplicativo acesse sua câmera para que você possa tirar fotos de seus anúncios.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Permite que o aplicativo acesse seu microfone para que você possa gravar áudios de seus anúncios.</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
