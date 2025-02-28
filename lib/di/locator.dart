@@ -3,14 +3,18 @@ import 'package:vizinhanca_shop/config/app_config.dart';
 import 'package:vizinhanca_shop/constants/environment.dart';
 import 'package:vizinhanca_shop/data/repositories/address_repository.dart';
 import 'package:vizinhanca_shop/data/repositories/announcement_repository.dart';
+import 'package:vizinhanca_shop/data/repositories/profile_repository.dart';
 import 'package:vizinhanca_shop/data/services/auth_service.dart';
 import 'package:vizinhanca_shop/data/services/local_storage_service.dart';
 import 'package:vizinhanca_shop/data/services/location_service.dart';
 import 'package:vizinhanca_shop/features/address/viewmodels/address_view_model.dart';
+import 'package:vizinhanca_shop/features/menu/viewmodels/menu_view_model.dart';
+import 'package:vizinhanca_shop/features/menu/views/menu_view.dart';
 import 'package:vizinhanca_shop/features/my_announcement/viewmodels/my_announcements_view_model.dart';
 import 'package:vizinhanca_shop/features/home/viewmodels/home_view_model.dart';
 import 'package:vizinhanca_shop/features/main/viewmodels/main_view_model.dart';
 import 'package:vizinhanca_shop/features/announcement/viewmodels/announcement_view_model.dart';
+import 'package:vizinhanca_shop/features/profile/viewmodels/profile_view_model.dart';
 import 'package:vizinhanca_shop/http/http_client.dart';
 
 final locator = GetIt.instance;
@@ -41,6 +45,12 @@ Future<void> setupLocator() async {
       appConfig: locator<AppConfig>(),
     ),
   );
+  locator.registerLazySingleton<ProfileRepository>(
+    () => ProfileRepository(
+      client: locator<HttpClient>(),
+      appConfig: locator<AppConfig>(),
+    ),
+  );
 
   // ViewModels
   locator.registerLazySingleton<AddressViewModel>(
@@ -59,5 +69,11 @@ Future<void> setupLocator() async {
   locator.registerLazySingleton<MyAnnouncementsViewModel>(
     () =>
         MyAnnouncementsViewModel(repository: locator<AnnouncementRepository>()),
+  );
+  locator.registerLazySingleton<ProfileViewModel>(
+    () => ProfileViewModel(repository: locator<ProfileRepository>()),
+  );
+  locator.registerLazySingleton<MenuViewModel>(
+    () => MenuViewModel(repository: locator<ProfileRepository>()),
   );
 }

@@ -5,7 +5,10 @@ import 'package:google_sign_in/google_sign_in.dart';
 final GoogleSignIn _googleSignIn = GoogleSignIn();
 
 class Login extends StatelessWidget {
-  const Login({super.key});
+  final String title;
+  final String message;
+
+  const Login({super.key, required this.title, required this.message});
 
   Future<void> _handleSignIn() async {
     try {
@@ -30,7 +33,7 @@ class Login extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           Text(
-            'Faça login para ver seus anúncios',
+            title,
             style: GoogleFonts.sora(
               fontSize: 18,
               fontWeight: FontWeight.w500,
@@ -40,7 +43,7 @@ class Login extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'Você precisa estar logado para\nacessar seus anúncios',
+            message,
             style: GoogleFonts.sora(fontSize: 14, color: Colors.grey[600]),
             textAlign: TextAlign.center,
           ),

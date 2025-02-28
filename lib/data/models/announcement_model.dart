@@ -8,6 +8,7 @@ class AnnouncementModel {
   final List<String> images;
   final UserModel seller;
   final String category;
+  final String address;
 
   AnnouncementModel({
     required this.id,
@@ -17,6 +18,7 @@ class AnnouncementModel {
     required this.images,
     required this.seller,
     required this.category,
+    required this.address,
   });
 
   factory AnnouncementModel.fromJson(Map<String, dynamic> json) {
@@ -28,6 +30,7 @@ class AnnouncementModel {
       images: List<String>.from(json['images']),
       seller: UserModel.fromJson(json['seller']),
       category: json['category'],
+      address: json['address'],
     );
   }
 
@@ -40,6 +43,7 @@ class AnnouncementModel {
       'images': images,
       'seller': seller.toJson(),
       'category': category,
+      'address': address,
     };
   }
 
@@ -52,6 +56,7 @@ class AnnouncementModel {
       images: [],
       seller: UserModel.empty(),
       category: '',
+      address: '',
     );
   }
 }

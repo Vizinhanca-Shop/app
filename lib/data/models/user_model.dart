@@ -2,14 +2,12 @@ class UserModel {
   final String id;
   final String name;
   final String phone;
-  final String address;
   final String avatar;
 
   UserModel({
     required this.id,
     required this.name,
     required this.phone,
-    required this.address,
     required this.avatar,
   });
 
@@ -18,22 +16,15 @@ class UserModel {
       id: json['id'],
       name: json['name'],
       phone: json['phone'],
-      address: json['address'],
       avatar: json['avatar'],
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'phone': phone,
-      'address': address,
-      'avatar': avatar,
-    };
+    return {'id': id, 'name': name, 'phone': phone, 'avatar': avatar};
   }
 
   factory UserModel.empty() {
-    return UserModel(id: '', name: '', phone: '', address: '', avatar: '');
+    return UserModel(id: '', name: '', phone: '', avatar: '');
   }
 }

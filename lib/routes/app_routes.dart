@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vizinhanca_shop/data/services/auth_service.dart';
 import 'package:vizinhanca_shop/di/locator.dart';
 import 'package:vizinhanca_shop/features/address/viewmodels/address_view_model.dart';
 import 'package:vizinhanca_shop/features/address/views/address_search_view.dart';
@@ -10,6 +11,8 @@ import 'package:vizinhanca_shop/features/announcement/viewmodels/announcement_vi
 import 'package:vizinhanca_shop/features/announcement/views/announcement_view.dart';
 import 'package:vizinhanca_shop/features/my_announcement/viewmodels/my_announcements_view_model.dart';
 import 'package:vizinhanca_shop/features/my_announcement/views/new_announcement_view.dart';
+import 'package:vizinhanca_shop/features/profile/viewmodels/profile_view_model.dart';
+import 'package:vizinhanca_shop/features/profile/views/profile_view.dart';
 
 class AppRoutes {
   static final GlobalKey<NavigatorState> navigatorKey =
@@ -20,6 +23,7 @@ class AppRoutes {
   static const String addressSearch = '/address-search';
   static const String announcement = '/announcement';
   static const String newAnnouncement = '/new-announcement';
+  static const String profile = '/profile';
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     return PageRouteBuilder<void>(
@@ -60,6 +64,11 @@ class AppRoutes {
           case newAnnouncement:
             return NewAnnouncementView(
               viewModel: locator<MyAnnouncementsViewModel>(),
+            );
+          case profile:
+            return ProfileView(
+              authService: locator<AuthService>(),
+              viewModel: locator<ProfileViewModel>(),
             );
           default:
             return Scaffold(

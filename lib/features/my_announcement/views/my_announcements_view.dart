@@ -24,13 +24,11 @@ class MyAnnouncementsView extends StatefulWidget {
 class _MyAnnouncementsViewState extends State<MyAnnouncementsView> {
   final TextEditingController _searchController = TextEditingController();
   bool _isLoggedIn = false;
-  bool _checkingAuthStatus = true;
 
   void _checkAuthStatus() async {
     final isLoggedIn = await widget.authService.isUserLoggedIn();
     setState(() {
       _isLoggedIn = isLoggedIn;
-      _checkingAuthStatus = false;
     });
 
     if (isLoggedIn) {
@@ -61,7 +59,13 @@ class _MyAnnouncementsViewState extends State<MyAnnouncementsView> {
     return Builder(
       builder: (context) {
         if (!_isLoggedIn) {
-          return Scaffold(backgroundColor: Colors.white, body: Login());
+          return Scaffold(
+            backgroundColor: Colors.white,
+            body: Login(
+              title: 'Faça login para ver seus anúncios',
+              message: 'Você precisa estar logado para\nacessar seus anúncios',
+            ),
+          );
         }
 
         return Scaffold(
@@ -131,7 +135,7 @@ class _MyAnnouncementsViewState extends State<MyAnnouncementsView> {
                 ListenableBuilder(
                   listenable: widget.viewModel,
                   builder: (context, snapshot) {
-                    if (widget.viewModel.isLoading || _checkingAuthStatus) {
+                    if (widget.viewModel.isLoading) {
                       return Expanded(
                         child: const Center(
                           child: CircularProgressIndicator(

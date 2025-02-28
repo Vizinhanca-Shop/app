@@ -49,8 +49,8 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                   label: 'Meus anúncios',
                 ),
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.person_rounded),
-                  label: 'Perfil',
+                  icon: Icon(Icons.menu_rounded),
+                  label: 'Menu',
                 ),
               ],
             );

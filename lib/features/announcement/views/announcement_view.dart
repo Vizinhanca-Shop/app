@@ -160,7 +160,7 @@ class _AnnouncementViewState extends State<AnnouncementView> {
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
-                              widget.viewModel.announcement.seller.address ??
+                              widget.viewModel.announcement.address ??
                                   'Endereço não informado',
                               style: GoogleFonts.sora(
                                 fontSize: 16,

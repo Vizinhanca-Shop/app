@@ -27,10 +27,10 @@ class AnnouncementRepository {
         id: '2',
         name: 'Maria Confeitaria',
         phone: '48 98888-8888',
-        address: 'Av. Central, 456',
         avatar: 'https://i.pravatar.cc/301',
       ),
       category: 'Alimentos e Bebidas',
+      address: 'Av. Central, 456',
     ),
 
     AnnouncementModel(
@@ -48,10 +48,10 @@ class AnnouncementRepository {
         id: '2',
         name: 'Açaí Tropical',
         phone: '48 97777-7777',
-        address: 'Rua do Comércio, 789',
         avatar: 'https://i.pravatar.cc/302',
       ),
       category: 'Alimentos e Bebidas',
+      address: 'Rua do Comércio, 789',
     ),
 
     AnnouncementModel(
@@ -69,10 +69,10 @@ class AnnouncementRepository {
         id: '2',
         name: 'Lanchonete Express',
         phone: '48 96666-6666',
-        address: 'Praça dos Sabores, 101',
         avatar: 'https://i.pravatar.cc/303',
       ),
       category: 'Alimentos e Bebidas',
+      address: 'Praça dos Sabores, 101',
     ),
 
     AnnouncementModel(
@@ -90,10 +90,10 @@ class AnnouncementRepository {
         id: '5',
         name: 'Tech Eletrônicos',
         phone: '48 95555-5555',
-        address: 'Shopping Center, Loja 12',
         avatar: 'https://i.pravatar.cc/304',
       ),
       category: 'Eletrônicos e Acessórios',
+      address: 'Shopping Center, Loja 12',
     ),
 
     AnnouncementModel(
@@ -111,10 +111,10 @@ class AnnouncementRepository {
         id: '6',
         name: 'Barbearia Elite',
         phone: '48 94444-4444',
-        address: 'Rua dos Estilos, 150',
         avatar: 'https://i.pravatar.cc/305',
       ),
       category: 'Beleza e Estética',
+      address: 'Rua dos Estilos, 150',
     ),
 
     AnnouncementModel(
@@ -132,10 +132,10 @@ class AnnouncementRepository {
         id: '7',
         name: 'Estética Bella',
         phone: '48 93333-3333',
-        address: 'Av. da Beleza, 222',
         avatar: 'https://i.pravatar.cc/306',
       ),
       category: 'Beleza e Estética',
+      address: 'Av. da Beleza, 222',
     ),
 
     AnnouncementModel(
@@ -153,10 +153,10 @@ class AnnouncementRepository {
         id: '8',
         name: 'Loja Digital',
         phone: '48 92222-2222',
-        address: 'Centro Comercial, Loja 8',
         avatar: 'https://i.pravatar.cc/307',
       ),
       category: 'Eletrônicos e Acessórios',
+      address: 'Centro Comercial, Loja 8',
     ),
 
     AnnouncementModel(
@@ -174,10 +174,10 @@ class AnnouncementRepository {
         id: '9',
         name: 'Brincar & Aprender',
         phone: '48 91111-1111',
-        address: 'Rua das Crianças, 300',
         avatar: 'https://i.pravatar.cc/308',
       ),
       category: 'Infantil',
+      address: 'Rua das Crianças, 300',
     ),
 
     AnnouncementModel(
@@ -195,10 +195,10 @@ class AnnouncementRepository {
         id: '10',
         name: 'Sabor da Terra',
         phone: '48 90000-0000',
-        address: 'Mercado Municipal, Box 15',
         avatar: 'https://i.pravatar.cc/309',
       ),
       category: 'Alimentos e Bebidas',
+      address: 'Mercado Municipal, Box 15',
     ),
   ];
 

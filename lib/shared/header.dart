@@ -51,7 +51,7 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
               child: Text(
                 title,
                 style: GoogleFonts.sora(
-                  fontSize: 16,
+                  fontSize: 18,
                   fontWeight: FontWeight.w500,
                   color: Colors.grey[800],
                 ),

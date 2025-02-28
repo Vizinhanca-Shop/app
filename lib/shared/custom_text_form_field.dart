@@ -67,6 +67,7 @@ class CustomTextFormField extends StatelessWidget {
       inputFormatters: inputFormatters,
       maxLines: maxLines,
       maxLength: maxLength,
+      onChanged: onChanged,
       style: GoogleFonts.lato(
         color: Colors.grey[800],
         fontSize: 16,
