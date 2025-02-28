@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vizinhanca_shop/data/services/auth_service.dart';
 import 'package:vizinhanca_shop/di/locator.dart';
 import 'package:vizinhanca_shop/features/address/viewmodels/address_view_model.dart';
 import 'package:vizinhanca_shop/features/my_announcement/viewmodels/my_announcements_view_model.dart';
@@ -13,7 +14,10 @@ class MainViewModel extends ChangeNotifier {
       addressViewModel: locator<AddressViewModel>(),
       homeViewModel: locator<HomeViewModel>(),
     ),
-    MyAnnouncementsView(viewModel: locator<MyAnnouncementsViewModel>()),
+    MyAnnouncementsView(
+      viewModel: locator<MyAnnouncementsViewModel>(),
+      authService: locator<AuthService>(),
+    ),
     Scaffold(body: Center(child: Text('Profile'))),
   ];
 
