@@ -8,7 +8,7 @@
 PRODUCT_NAME = vizinhanca_shop
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.example.vizinhancaShop
+PRODUCT_BUNDLE_IDENTIFIER = com.app.vizinhancaShop
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2025 com.example. All rights reserved.

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "642008022892",
+    "project_id": "vizinhanca-shop",
+    "storage_bucket": "vizinhanca-shop.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:642008022892:android:ae9ec972f8cf22df65bd49",
+        "android_client_info": {
+          "package_name": "com.app.vizinhanca_shop"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBgOYbNBinuUV-jLKAvsEcAMbV8kIuC68E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
