@@ -15,8 +15,6 @@ class AppRoutes {
   static final GlobalKey<NavigatorState> navigatorKey =
       GlobalKey<NavigatorState>();
 
-  static const String login = '/login';
-  static const String register = '/register';
   static const String main = '/main';
   static const String home = '/home';
   static const String addressSearch = '/address-search';
@@ -45,10 +43,6 @@ class AppRoutes {
       transitionDuration: const Duration(milliseconds: 300),
       pageBuilder: (context, animation, secondaryAnimation) {
         switch (settings.name) {
-          case login:
-            return Scaffold(body: Center(child: Text('Login')));
-          case register:
-            return Scaffold(body: Center(child: Text('Register')));
           case main:
             return MainView(viewModel: locator<MainViewModel>());
           case home:
