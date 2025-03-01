@@ -292,13 +292,11 @@ class AnnouncementRepository {
   Future<void> updateAnnouncement(AnnouncementModel announcement) async {
     await Future.delayed(Duration(seconds: 2));
 
-    // Separe as imagens locais das imagens remotas (URLs)
     final localImages =
         announcement.images.where((img) => !img.startsWith('http')).toList();
     final remoteImages =
         announcement.images.where((img) => img.startsWith('http')).toList();
 
-    // Crie os MultipartFiles somente para as imagens locais
     List<http.MultipartFile> multipartFiles = [];
     for (final imagePath in localImages) {
       final multipartFile = await http.MultipartFile.fromPath(
@@ -308,22 +306,19 @@ class AnnouncementRepository {
       multipartFiles.add(multipartFile);
     }
 
-    // Monte os campos do formulário
     Map<String, dynamic> fields = {
       'name': announcement.name,
       'description': announcement.description,
       'price': announcement.price.toString(),
       'category': announcement.category.id,
       'address': announcement.address,
-      // Se necessário, envie as imagens remotas (em JSON, por exemplo)
       'remote_images': jsonEncode(remoteImages),
     };
 
-    // Adicione cada MultipartFile com uma chave única (por exemplo, images[0], images[1], etc.)
     for (int i = 0; i < multipartFiles.length; i++) {
       fields['images[$i]'] = multipartFiles[i];
     }
-    print(fields);
+
     final url = Uri.parse('$baseUrl/products/${announcement.id}');
     final response = await client.multipart(url, data: fields, method: 'PUT');
 
