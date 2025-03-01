@@ -1,5 +1,9 @@
+import 'dart:convert';
+
+import 'package:http/http.dart' as http;
 import 'package:vizinhanca_shop/config/app_config.dart';
 import 'package:vizinhanca_shop/data/models/announcement_model.dart';
+import 'package:vizinhanca_shop/data/models/category_model.dart';
 import 'package:vizinhanca_shop/data/models/user_model.dart';
 import 'package:vizinhanca_shop/http/http_client.dart';
 
@@ -29,7 +33,7 @@ class AnnouncementRepository {
         phone: '48 98888-8888',
         avatar: 'https://i.pravatar.cc/301',
       ),
-      category: 'Alimentos e Bebidas',
+      category: CategoryModel(id: '1', name: 'Alimentos e Bebidas'),
       address: 'Av. Central, 456',
     ),
 
@@ -50,7 +54,7 @@ class AnnouncementRepository {
         phone: '48 97777-7777',
         avatar: 'https://i.pravatar.cc/302',
       ),
-      category: 'Alimentos e Bebidas',
+      category: CategoryModel(id: '1', name: 'Alimentos e Bebidas'),
       address: 'Rua do Comércio, 789',
     ),
 
@@ -71,7 +75,7 @@ class AnnouncementRepository {
         phone: '48 96666-6666',
         avatar: 'https://i.pravatar.cc/303',
       ),
-      category: 'Alimentos e Bebidas',
+      category: CategoryModel(id: '1', name: 'Alimentos e Bebidas'),
       address: 'Praça dos Sabores, 101',
     ),
 
@@ -92,7 +96,7 @@ class AnnouncementRepository {
         phone: '48 95555-5555',
         avatar: 'https://i.pravatar.cc/304',
       ),
-      category: 'Eletrônicos e Acessórios',
+      category: CategoryModel(id: '2', name: 'Eletrônicos e Acessórios'),
       address: 'Shopping Center, Loja 12',
     ),
 
@@ -113,7 +117,7 @@ class AnnouncementRepository {
         phone: '48 94444-4444',
         avatar: 'https://i.pravatar.cc/305',
       ),
-      category: 'Beleza e Estética',
+      category: CategoryModel(id: '10', name: 'Beleza e Estética'),
       address: 'Rua dos Estilos, 150',
     ),
 
@@ -134,7 +138,7 @@ class AnnouncementRepository {
         phone: '48 93333-3333',
         avatar: 'https://i.pravatar.cc/306',
       ),
-      category: 'Beleza e Estética',
+      category: CategoryModel(id: '10', name: 'Beleza e Estética'),
       address: 'Av. da Beleza, 222',
     ),
 
@@ -155,7 +159,7 @@ class AnnouncementRepository {
         phone: '48 92222-2222',
         avatar: 'https://i.pravatar.cc/307',
       ),
-      category: 'Eletrônicos e Acessórios',
+      category: CategoryModel(id: '2', name: 'Eletrônicos e Acessórios'),
       address: 'Centro Comercial, Loja 8',
     ),
 
@@ -176,7 +180,7 @@ class AnnouncementRepository {
         phone: '48 91111-1111',
         avatar: 'https://i.pravatar.cc/308',
       ),
-      category: 'Infantil',
+      category: CategoryModel(id: '7', name: 'Infantil'),
       address: 'Rua das Crianças, 300',
     ),
 
@@ -197,7 +201,7 @@ class AnnouncementRepository {
         phone: '48 90000-0000',
         avatar: 'https://i.pravatar.cc/309',
       ),
-      category: 'Alimentos e Bebidas',
+      category: CategoryModel(id: '1', name: 'Alimentos e Bebidas'),
       address: 'Mercado Municipal, Box 15',
     ),
   ];
@@ -265,6 +269,70 @@ class AnnouncementRepository {
           .toList();
     } catch (e) {
       return [];
+    }
+  }
+
+  Future<void> createAnnouncement(AnnouncementModel announcement) async {
+    // final url = Uri.parse('$baseUrl/products');
+
+    try {
+      // final response = await client.post(url, data: announcement.toJson());
+      // if (response.statusCode == 201) {
+      //   return;
+      // } else {
+      //   throw Exception('Failed to create announcement');
+      // }
+
+      await Future.delayed(Duration(seconds: 2));
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> updateAnnouncement(AnnouncementModel announcement) async {
+    await Future.delayed(Duration(seconds: 2));
+
+    // Separe as imagens locais das imagens remotas (URLs)
+    final localImages =
+        announcement.images.where((img) => !img.startsWith('http')).toList();
+    final remoteImages =
+        announcement.images.where((img) => img.startsWith('http')).toList();
+
+    // Crie os MultipartFiles somente para as imagens locais
+    List<http.MultipartFile> multipartFiles = [];
+    for (final imagePath in localImages) {
+      final multipartFile = await http.MultipartFile.fromPath(
+        'images',
+        imagePath,
+      );
+      multipartFiles.add(multipartFile);
+    }
+
+    // Monte os campos do formulário
+    Map<String, dynamic> fields = {
+      'name': announcement.name,
+      'description': announcement.description,
+      'price': announcement.price.toString(),
+      'category': announcement.category.id,
+      'address': announcement.address,
+      // Se necessário, envie as imagens remotas (em JSON, por exemplo)
+      'remote_images': jsonEncode(remoteImages),
+    };
+
+    // Adicione cada MultipartFile com uma chave única (por exemplo, images[0], images[1], etc.)
+    for (int i = 0; i < multipartFiles.length; i++) {
+      fields['images[$i]'] = multipartFiles[i];
+    }
+    print(fields);
+    final url = Uri.parse('$baseUrl/products/${announcement.id}');
+    final response = await client.multipart(url, data: fields, method: 'PUT');
+
+    if (response.statusCode == 200) {
+      print('Anúncio atualizado com sucesso!');
+      print('Anúncio atualizado com sucesso!');
+    } else {
+      print('Erro ao atualizar anúncio: ${response.statusCode}');
+      throw Exception('Erro ao atualizar anúncio');
     }
   }
 }

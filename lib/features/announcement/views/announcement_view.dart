@@ -129,7 +129,7 @@ class _AnnouncementViewState extends State<AnnouncementView> {
                               borderRadius: BorderRadius.circular(16),
                             ),
                             child: Text(
-                              widget.viewModel.announcement.category,
+                              widget.viewModel.announcement.category.name,
                               style: GoogleFonts.sora(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,

@@ -8,6 +8,7 @@ class MyAnnouncementsViewModel extends ChangeNotifier {
   final List<AnnouncementModel> _announcements = [];
   List<AnnouncementModel> _filteredAnnouncements = [];
   bool _isLoading = false;
+  bool _isEditing = false;
 
   final List<CategoryModel> _categories = [
     CategoryModel(id: '1', name: 'Alimentos e Bebidas'),
@@ -29,6 +30,7 @@ class MyAnnouncementsViewModel extends ChangeNotifier {
   List<AnnouncementModel> get announcements => _announcements;
   List<AnnouncementModel> get filteredAnnouncements => _filteredAnnouncements;
   bool get isLoading => _isLoading;
+  bool get isEditing => _isEditing;
   List<CategoryModel> get categories => _categories;
 
   Future<void> fetchAnnouncements({required String userId}) async {
@@ -65,12 +67,23 @@ class MyAnnouncementsViewModel extends ChangeNotifier {
     }
   }
 
-  void updateAnnouncement(AnnouncementModel announcement) {
-    final index = _announcements.indexWhere(
-      (element) => element.id == announcement.id,
-    );
-    if (index != -1) {
-      _announcements[index] = announcement;
+  Future<void> updateAnnouncement(AnnouncementModel announcement) async {
+    _isEditing = true;
+    notifyListeners();
+
+    try {
+      await _repository.updateAnnouncement(announcement);
+      final index = _announcements.indexWhere(
+        (element) => element.id == announcement.id,
+      );
+      if (index != -1) {
+        _announcements[index] = announcement;
+        notifyListeners();
+      }
+    } catch (e) {
+      print(e);
+    } finally {
+      _isEditing = false;
       notifyListeners();
     }
   }

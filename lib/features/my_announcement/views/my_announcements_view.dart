@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vizinhanca_shop/data/services/auth_service.dart';
 import 'package:vizinhanca_shop/features/my_announcement/viewmodels/my_announcements_view_model.dart';
+import 'package:vizinhanca_shop/features/my_announcement/views/my_announcement_details.dart';
 import 'package:vizinhanca_shop/features/my_announcement/views/widgets/my_announcement_preview.dart';
 import 'package:vizinhanca_shop/routes/app_routes.dart';
 import 'package:vizinhanca_shop/shared/login.dart';
@@ -195,7 +196,14 @@ class _MyAnnouncementsViewState extends State<MyAnnouncementsView> {
                                         .filteredAnnouncements[index];
                                 return MyAnnouncementPreview(
                                   announcement: announcement,
-                                  onTap: () {},
+                                  onTap: () {
+                                    Navigator.of(context).pushNamed(
+                                      AppRoutes.myAnnouncementDetails,
+                                      arguments: MyAnnouncementDetailsArguments(
+                                        announcementId: announcement.id,
+                                      ),
+                                    );
+                                  },
                                 );
                               },
                             ),

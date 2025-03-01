@@ -10,6 +10,7 @@ import 'package:vizinhanca_shop/features/main/views/main_view.dart';
 import 'package:vizinhanca_shop/features/announcement/viewmodels/announcement_view_model.dart';
 import 'package:vizinhanca_shop/features/announcement/views/announcement_view.dart';
 import 'package:vizinhanca_shop/features/my_announcement/viewmodels/my_announcements_view_model.dart';
+import 'package:vizinhanca_shop/features/my_announcement/views/my_announcement_details.dart';
 import 'package:vizinhanca_shop/features/my_announcement/views/new_announcement_view.dart';
 import 'package:vizinhanca_shop/features/profile/viewmodels/profile_view_model.dart';
 import 'package:vizinhanca_shop/features/profile/views/profile_view.dart';
@@ -22,6 +23,7 @@ class AppRoutes {
   static const String home = '/home';
   static const String addressSearch = '/address-search';
   static const String announcement = '/announcement';
+  static const String myAnnouncementDetails = '/announcement-details';
   static const String newAnnouncement = '/new-announcement';
   static const String profile = '/profile';
 
@@ -60,6 +62,12 @@ class AppRoutes {
             return AnnouncementView(
               arguments: settings.arguments as AnnouncementViewArguments,
               viewModel: locator<AnnouncementViewModel>(),
+            );
+          case myAnnouncementDetails:
+            return MyAnnouncementDetails(
+              viewModel: locator<AnnouncementViewModel>(),
+              myAnnouncementsViewModel: locator<MyAnnouncementsViewModel>(),
+              arguments: settings.arguments as MyAnnouncementDetailsArguments,
             );
           case newAnnouncement:
             return NewAnnouncementView(

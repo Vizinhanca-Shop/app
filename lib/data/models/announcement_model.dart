@@ -1,3 +1,4 @@
+import 'package:vizinhanca_shop/data/models/category_model.dart';
 import 'package:vizinhanca_shop/data/models/user_model.dart';
 
 class AnnouncementModel {
@@ -7,7 +8,7 @@ class AnnouncementModel {
   final double price;
   final List<String> images;
   final UserModel seller;
-  final String category;
+  final CategoryModel category;
   final String address;
 
   AnnouncementModel({
@@ -29,7 +30,7 @@ class AnnouncementModel {
       price: json['price'],
       images: List<String>.from(json['images']),
       seller: UserModel.fromJson(json['seller']),
-      category: json['category'],
+      category: CategoryModel.fromJson(json['category']),
       address: json['address'],
     );
   }
@@ -42,7 +43,7 @@ class AnnouncementModel {
       'price': price,
       'images': images,
       'seller': seller.toJson(),
-      'category': category,
+      'category': category.toJson(),
       'address': address,
     };
   }
@@ -55,7 +56,7 @@ class AnnouncementModel {
       price: 0.0,
       images: [],
       seller: UserModel.empty(),
-      category: '',
+      category: CategoryModel(id: '', name: ''),
       address: '',
     );
   }
