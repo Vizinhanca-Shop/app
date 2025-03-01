@@ -220,6 +220,23 @@ class _HomeViewState extends State<HomeView> {
                   );
                 }
 
+                if (widget.homeViewModel.announcements.isEmpty) {
+                  return Expanded(
+                    child: Center(
+                      child: Transform.translate(
+                        offset: const Offset(0, -100),
+                        child: Text(
+                          'Nenhum anúncio encontrado',
+                          style: GoogleFonts.sora(
+                            color: Colors.grey[600],
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }
+
                 return Expanded(
                   child: GridView.builder(
                     gridDelegate:
