@@ -12,7 +12,16 @@
           "package_name": "com.app.vizinhanca_shop"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "642008022892-t38mvml8g0r91cvckhr0ccusl3gnlerl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.vizinhanca_shop",
+            "certificate_hash": "17475c5b9b9ca114c4f21bb6442477e5fdd0f039"
+          }
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBgOYbNBinuUV-jLKAvsEcAMbV8kIuC68E"
