@@ -1,27 +1,29 @@
+import 'package:flutter/foundation.dart';
 import 'package:vizinhanca_shop/data/services/local_storage_service.dart';
 
-class AuthService {
-  Future<bool> isUserLoggedIn() async {
-    return false;
-  }
-
-  Future<void> logout() async {}
-}
-
-class AuthServiceImpl implements AuthService {
+class AuthService extends ChangeNotifier {
   final LocalStorageService _localStorageService;
 
-  AuthServiceImpl({required LocalStorageService localStorageService})
+  AuthService({required LocalStorageService localStorageService})
     : _localStorageService = localStorageService;
 
-  @override
+  bool _isLoggedIn = false;
+
+  bool get isLoggedIn => _isLoggedIn;
+
   Future<bool> isUserLoggedIn() async {
-    return true;
-    return await _localStorageService.getString('access_token') != null;
+    final token = await _localStorageService.getString('token');
+    _isLoggedIn = token != null && token.isNotEmpty;
+    return _isLoggedIn;
   }
 
-  @override
+  void setLoggedIn(bool value) {
+    _isLoggedIn = value;
+    notifyListeners();
+  }
+
   Future<void> logout() async {
-    await _localStorageService.remove('access_token');
+    await _localStorageService.remove('token');
+    setLoggedIn(false);
   }
 }

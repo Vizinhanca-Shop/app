@@ -1,20 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:vizinhanca_shop/features/login/viewmodels/login_view_model.dart';
 
 final GoogleSignIn _googleSignIn = GoogleSignIn();
 
 class Login extends StatelessWidget {
+  final LoginViewModel _loginViewModel;
   final String title;
   final String message;
 
-  const Login({super.key, required this.title, required this.message});
+  const Login({
+    super.key,
+    required LoginViewModel loginViewModel,
+    required this.title,
+    required this.message,
+  }) : _loginViewModel = loginViewModel;
 
   Future<void> _handleSignIn() async {
     try {
       final credentials = await _googleSignIn.signIn();
       final authentication = await credentials?.authentication;
-      print({authentication?.accessToken});
+      final accessToken = authentication?.accessToken;
+
+      if (accessToken != null) {
+        _loginViewModel.loginWithGoogle(accessToken);
+      }
     } catch (error) {
       print(error);
     }

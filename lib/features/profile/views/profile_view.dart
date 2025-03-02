@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vizinhanca_shop/data/services/auth_service.dart';
+import 'package:vizinhanca_shop/di/locator.dart';
+import 'package:vizinhanca_shop/features/login/viewmodels/login_view_model.dart';
 import 'package:vizinhanca_shop/features/profile/viewmodels/profile_view_model.dart';
 import 'package:vizinhanca_shop/shared/custom_text_form_field.dart';
 import 'package:vizinhanca_shop/shared/header.dart';
@@ -74,18 +76,37 @@ class _ProfileViewState extends State<ProfileView> {
     }
   }
 
+  void _authStateChanged() async {
+    final isLoggedIn = widget.authService.isLoggedIn;
+    if (isLoggedIn && !_isLoggedIn) {
+      setState(() {
+        _isLoggedIn = true;
+      });
+
+      await widget.viewModel.fetchUserById(userId: '1');
+      _initControllers();
+    } else if (!isLoggedIn && _isLoggedIn) {
+      setState(() {
+        _isLoggedIn = false;
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     _nameController = TextEditingController();
     _phoneController = TextEditingController();
     _checkAuthStatus();
+
+    widget.authService.addListener(_authStateChanged);
   }
 
   @override
   void dispose() {
     _nameController.dispose();
     _phoneController.dispose();
+    widget.authService.removeListener(_authStateChanged);
     super.dispose();
   }
 
@@ -155,6 +176,7 @@ class _ProfileViewState extends State<ProfileView> {
             return Transform.translate(
               offset: Offset(0, -100),
               child: Login(
+                loginViewModel: locator<LoginViewModel>(),
                 title: 'Faça login para acessar o perfil',
                 message: 'Você precisa estar logado para acessar o perfil',
               ),

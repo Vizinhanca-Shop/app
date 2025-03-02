@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vizinhanca_shop/data/services/auth_service.dart';
+import 'package:vizinhanca_shop/di/locator.dart';
+import 'package:vizinhanca_shop/features/login/viewmodels/login_view_model.dart';
 import 'package:vizinhanca_shop/features/my_announcement/viewmodels/my_announcements_view_model.dart';
 import 'package:vizinhanca_shop/features/my_announcement/views/my_announcement_details.dart';
 import 'package:vizinhanca_shop/features/my_announcement/views/widgets/my_announcement_preview.dart';
@@ -45,6 +47,19 @@ class _MyAnnouncementsViewState extends State<MyAnnouncementsView> {
     ).pushNamed(AppRoutes.newAnnouncement);
   }
 
+  void _authStateChanged() async {
+    final isLoggedIn = widget.authService.isLoggedIn;
+    if (isLoggedIn && !_isLoggedIn) {
+      setState(() {
+        _isLoggedIn = true;
+      });
+    } else if (!isLoggedIn && _isLoggedIn) {
+      setState(() {
+        _isLoggedIn = false;
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -55,6 +70,14 @@ class _MyAnnouncementsViewState extends State<MyAnnouncementsView> {
         widget.viewModel.handleFilterAnnouncements(_searchController.text);
       }
     });
+
+    widget.authService.addListener(_authStateChanged);
+  }
+
+  @override
+  void dispose() {
+    widget.authService.removeListener(_authStateChanged);
+    super.dispose();
   }
 
   @override
@@ -146,6 +169,7 @@ class _MyAnnouncementsViewState extends State<MyAnnouncementsView> {
                     child: Transform.translate(
                       offset: Offset(0, -100),
                       child: Login(
+                        loginViewModel: locator<LoginViewModel>(),
                         title: 'Faça login para ver seus anúncios',
                         message:
                             'Você precisa estar logado para\nacessar seus anúncios',

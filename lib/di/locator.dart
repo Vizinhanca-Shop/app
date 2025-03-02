@@ -3,13 +3,14 @@ import 'package:vizinhanca_shop/config/app_config.dart';
 import 'package:vizinhanca_shop/constants/environment.dart';
 import 'package:vizinhanca_shop/data/repositories/address_repository.dart';
 import 'package:vizinhanca_shop/data/repositories/announcement_repository.dart';
+import 'package:vizinhanca_shop/data/repositories/login_repository.dart';
 import 'package:vizinhanca_shop/data/repositories/profile_repository.dart';
 import 'package:vizinhanca_shop/data/services/auth_service.dart';
 import 'package:vizinhanca_shop/data/services/local_storage_service.dart';
 import 'package:vizinhanca_shop/data/services/location_service.dart';
 import 'package:vizinhanca_shop/features/address/viewmodels/address_view_model.dart';
+import 'package:vizinhanca_shop/features/login/viewmodels/login_view_model.dart';
 import 'package:vizinhanca_shop/features/menu/viewmodels/menu_view_model.dart';
-import 'package:vizinhanca_shop/features/menu/views/menu_view.dart';
 import 'package:vizinhanca_shop/features/my_announcement/viewmodels/my_announcements_view_model.dart';
 import 'package:vizinhanca_shop/features/home/viewmodels/home_view_model.dart';
 import 'package:vizinhanca_shop/features/main/viewmodels/main_view_model.dart';
@@ -31,7 +32,7 @@ Future<void> setupLocator() async {
     () => LocalStorageServiceImpl(),
   );
   locator.registerLazySingleton<AuthService>(
-    () => AuthServiceImpl(localStorageService: locator<LocalStorageService>()),
+    () => AuthService(localStorageService: locator<LocalStorageService>()),
   );
   locator.registerLazySingleton<LocationService>(() => LocationServiceImpl());
 
@@ -51,8 +52,21 @@ Future<void> setupLocator() async {
       appConfig: locator<AppConfig>(),
     ),
   );
+  locator.registerLazySingleton<LoginRepository>(
+    () => LoginRepository(
+      client: locator<HttpClient>(),
+      appConfig: locator<AppConfig>(),
+      localStorageService: locator<LocalStorageService>(),
+    ),
+  );
 
   // ViewModels
+  locator.registerLazySingleton<LoginViewModel>(
+    () => LoginViewModel(
+      loginRepository: locator<LoginRepository>(),
+      authService: locator<AuthService>(),
+    ),
+  );
   locator.registerLazySingleton<AddressViewModel>(
     () => AddressViewModel(
       repository: locator<AddressRepository>(),
