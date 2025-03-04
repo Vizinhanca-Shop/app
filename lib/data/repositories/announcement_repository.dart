@@ -28,17 +28,20 @@ class AnnouncementRepository {
     int page = 1,
     int limit = 10,
     required FiltersModel filters,
+    required String? latitude,
+    required String? longitude,
   }) async {
     var url = Uri.parse('$baseUrl/api/announcements?page=$page&limit=$limit');
 
     final LocationData location = await locationService.getCurrentLocation();
 
     Map<String, String> queryParams = {
-      'latitude': location.latitude.toString(),
-      'longitude': location.longitude.toString(),
+      'latitude': latitude ?? location.latitude.toString(),
+      'longitude': longitude ?? location.longitude.toString(),
       'category': filters.category,
       'radius': filters.radius.toString(),
       'sortBy': filters.order == 'Mais recentes' ? 'createdAt' : 'distance',
+      'search': filters.search ?? '',
     };
 
     url = url.replace(queryParameters: queryParams);
@@ -215,6 +218,25 @@ class AnnouncementRepository {
     } else {
       print('Erro ao atualizar anúncio: ${response.statusCode}');
       throw Exception('Erro ao atualizar anúncio');
+    }
+  }
+
+  Future<void> deleteAnnouncement(String productId) async {
+    final token = await localStorageService.getString('token');
+    final url = Uri.parse('$baseUrl/api/announcements/$productId');
+
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+
+    final response = await client.delete(url, customHeaders: headers);
+
+    if (response.statusCode == 200) {
+      print('Anúncio deletado com sucesso!');
+    } else {
+      print('Erro ao deletar anúncio: ${response.statusCode}');
+      throw Exception('Erro ao deletar anúncio');
     }
   }
 }
