@@ -34,7 +34,7 @@
 			</dict>
 		</array>
 		<key>NSLocationWhenInUseUsageDescription</key>
-		<string>Permite que o aplicativo acesse sua localização para que possamos mostrar produtos próximos a você.</string>
+		<string>Permite que o aplicativo acesse sua localização para que possamos mostrar anúncios próximos a você.</string>
 		<key>NSPhotoLibraryUsageDescription</key>
 		<string>Permite que o aplicativo acesse sua galeria de fotos para que você possa enviar fotos de seus anúncios.</string>
 		<key>NSCameraUsageDescription</key>
