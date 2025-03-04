@@ -203,6 +203,7 @@ class _FiltersState extends State<Filters> {
                       value: _localDistance,
                       min: 1,
                       max: 10,
+                      divisions: 9,
                       onChanged: (value) {
                         _handleDistanceChanged(value);
                       },
