@@ -28,7 +28,7 @@ class MenuView extends StatelessWidget {
     DialogHelper.showDeleteAccountDialog(
       AppRoutes.navigatorKey.currentContext!,
       onDelete: () {
-        profileViewModel.deleteUser(userId: '1');
+        profileViewModel.deleteUser();
         _logout();
       },
       profileViewModel: profileViewModel,
