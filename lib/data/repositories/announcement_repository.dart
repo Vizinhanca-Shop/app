@@ -68,8 +68,8 @@ class AnnouncementRepository {
     }
   }
 
-  Future<AnnouncementModel> fetchAnnouncement(String productId) async {
-    final url = Uri.parse('$baseUrl/api/announcements/$productId');
+  Future<AnnouncementModel> fetchAnnouncement(String announcementId) async {
+    final url = Uri.parse('$baseUrl/api/announcements/$announcementId');
 
     try {
       final response = await client.get(url);
@@ -221,9 +221,9 @@ class AnnouncementRepository {
     }
   }
 
-  Future<void> deleteAnnouncement(String productId) async {
+  Future<void> deleteAnnouncement(String announcementId) async {
     final token = await localStorageService.getString('token');
-    final url = Uri.parse('$baseUrl/api/announcements/$productId');
+    final url = Uri.parse('$baseUrl/api/announcements/$announcementId');
 
     final headers = {
       'Content-Type': 'application/json',
