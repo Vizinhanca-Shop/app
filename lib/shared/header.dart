@@ -6,6 +6,7 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onPressed;
   final bool hideBackButton;
   final Color backgroundColor;
+  final List<Widget>? actions;
 
   const Header({
     super.key,
@@ -13,6 +14,7 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
     this.onPressed,
     this.hideBackButton = false,
     this.backgroundColor = Colors.white,
+    this.actions,
   });
 
   @override
@@ -58,7 +60,15 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            const SizedBox(width: 40),
+            Builder(
+              builder: (context) {
+                if (actions != null) {
+                  return Row(children: actions!);
+                }
+
+                return const SizedBox(width: 40);
+              },
+            ),
           ],
         ),
       ),
