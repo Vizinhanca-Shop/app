@@ -1,9 +1,6 @@
-import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:vizinhanca_shop/data/models/announcement_address_model.dart';
 import 'package:vizinhanca_shop/data/models/create_announcement_model.dart';
@@ -37,7 +34,6 @@ class _NewAnnouncementViewState extends State<NewAnnouncementView> {
   final TextEditingController _cidadeController = TextEditingController();
   final TextEditingController _estadoController = TextEditingController();
 
-  // Imagens
   final ImagePicker _picker = ImagePicker();
   List<XFile> _images = [];
 
@@ -49,38 +45,24 @@ class _NewAnnouncementViewState extends State<NewAnnouncementView> {
   }
 
   Future<void> _fetchAddressFromCep(String cep) async {
-    final url = Uri.parse('https://viacep.com.br/ws/$cep/json/');
-    final response = await http.get(url);
+    final address = await widget.viewModel.fetchAddressFromCep(cep);
 
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      if (data != null && data['erro'] != true) {
-        setState(() {
-          _ruaController.text = data['logradouro'] ?? '';
-          _bairroController.text = data['bairro'] ?? '';
-          _cidadeController.text = data['localidade'] ?? '';
-          _estadoController.text = data['uf'] ?? '';
-        });
-      }
-    }
+    setState(() {
+      _ruaController.text = address['logradouro'] ?? '';
+      _bairroController.text = address['bairro'] ?? '';
+      _cidadeController.text = address['localidade'] ?? '';
+      _estadoController.text = address['uf'] ?? '';
+    });
   }
 
-  Future<Map<String, double>?> getCoordinatesFromAddress(String address) async {
-    final url = Uri.parse(
-      'https://nominatim.openstreetmap.org/search?format=json&q=$address',
+  Future<Map<String, double>?> _getCoordinatesFromAddress(
+    String address,
+  ) async {
+    final coordinates = await widget.viewModel.getCoordinatesFromAddress(
+      address,
     );
-    final response = await http.get(url);
 
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      if (data.isNotEmpty) {
-        return {
-          'latitude': double.parse(data[0]['lat']),
-          'longitude': double.parse(data[0]['lon']),
-        };
-      }
-    }
-    return null;
+    return coordinates;
   }
 
   Future<void> _submit() async {
@@ -112,7 +94,7 @@ class _NewAnnouncementViewState extends State<NewAnnouncementView> {
       final fullAddress =
           "${_ruaController.text}, ${_bairroController.text}, ${_cidadeController.text} - ${_estadoController.text}";
 
-      final coordinates = await getCoordinatesFromAddress(fullAddress);
+      final coordinates = await _getCoordinatesFromAddress(fullAddress);
 
       if (coordinates == null) {
         showDialog(

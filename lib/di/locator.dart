@@ -83,8 +83,10 @@ Future<void> setupLocator() async {
   );
   locator.registerLazySingleton<MainViewModel>(() => MainViewModel());
   locator.registerLazySingleton<MyAnnouncementsViewModel>(
-    () =>
-        MyAnnouncementsViewModel(repository: locator<AnnouncementRepository>()),
+    () => MyAnnouncementsViewModel(
+      repository: locator<AnnouncementRepository>(),
+      addressRepository: locator<AddressRepository>(),
+    ),
   );
   locator.registerLazySingleton<ProfileViewModel>(
     () => ProfileViewModel(repository: locator<ProfileRepository>()),

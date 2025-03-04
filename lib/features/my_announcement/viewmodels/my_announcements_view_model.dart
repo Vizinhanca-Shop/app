@@ -4,19 +4,24 @@ import 'package:vizinhanca_shop/constants/categories.dart';
 import 'package:vizinhanca_shop/data/models/announcement_model.dart';
 import 'package:vizinhanca_shop/data/models/category_model.dart';
 import 'package:vizinhanca_shop/data/models/create_announcement_model.dart';
+import 'package:vizinhanca_shop/data/repositories/address_repository.dart';
 import 'package:vizinhanca_shop/data/repositories/announcement_repository.dart';
 import 'package:vizinhanca_shop/routes/app_routes.dart';
 import 'package:vizinhanca_shop/theme/app_colors.dart';
 
 class MyAnnouncementsViewModel extends ChangeNotifier {
   final AnnouncementRepository _repository;
+  final AddressRepository _addressRepository;
   final List<AnnouncementModel> _announcements = [];
   List<AnnouncementModel> _filteredAnnouncements = [];
   bool _isLoading = false;
   bool _isEditing = false;
 
-  MyAnnouncementsViewModel({required AnnouncementRepository repository})
-    : _repository = repository;
+  MyAnnouncementsViewModel({
+    required AnnouncementRepository repository,
+    required AddressRepository addressRepository,
+  }) : _repository = repository,
+       _addressRepository = addressRepository;
 
   List<AnnouncementModel> get announcements => _announcements;
   List<AnnouncementModel> get filteredAnnouncements => _filteredAnnouncements;
@@ -141,6 +146,14 @@ class MyAnnouncementsViewModel extends ChangeNotifier {
       _isEditing = false;
       notifyListeners();
     }
+  }
+
+  Future<Map<String, double>?> getCoordinatesFromAddress(String address) async {
+    return await _addressRepository.getCoordinatesFromAddress(address);
+  }
+
+  Future<Map<String, dynamic>> fetchAddressFromCep(String cep) async {
+    return await _addressRepository.fetchAddressFromCep(cep);
   }
 
   void handleFilterAnnouncements(String query) {

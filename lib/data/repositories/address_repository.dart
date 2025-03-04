@@ -30,4 +30,40 @@ class AddressRepository {
       return [];
     }
   }
+
+  Future<Map<String, double>?> getCoordinatesFromAddress(String address) async {
+    final url = Uri.parse(
+      'https://nominatim.openstreetmap.org/search?format=json&q=$address',
+    );
+
+    final response = await client.get(url);
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+
+      if (data.isNotEmpty) {
+        return {
+          'latitude': double.parse(data[0]['lat']),
+          'longitude': double.parse(data[0]['lon']),
+        };
+      }
+    }
+
+    return null;
+  }
+
+  Future<Map<String, dynamic>> fetchAddressFromCep(String cep) async {
+    final url = Uri.parse('https://viacep.com.br/ws/$cep/json/');
+    final response = await client.get(url);
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+
+      if (data != null && data['erro'] != true) {
+        return data;
+      }
+    }
+
+    return {};
+  }
 }
