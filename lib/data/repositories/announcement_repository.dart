@@ -31,11 +31,11 @@ class AnnouncementRepository {
   }) async {
     var url = Uri.parse('$baseUrl/api/announcements?page=$page&limit=$limit');
 
-    // final LocationData location = await locationService.getCurrentLocation();
+    final LocationData location = await locationService.getCurrentLocation();
 
     Map<String, String> queryParams = {
-      // 'latitude': location.latitude.toString(),
-      // 'longitude': location.longitude.toString(),
+      'latitude': location.latitude.toString(),
+      'longitude': location.longitude.toString(),
       'category': filters.category,
       'radius': filters.radius.toString(),
       'sortBy': filters.order == 'Mais recentes' ? 'createdAt' : 'distance',
