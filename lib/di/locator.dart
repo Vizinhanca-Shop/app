@@ -52,6 +52,7 @@ Future<void> setupLocator() async {
     () => ProfileRepository(
       client: locator<HttpClient>(),
       appConfig: locator<AppConfig>(),
+      localStorageService: locator<LocalStorageService>(),
     ),
   );
   locator.registerLazySingleton<LoginRepository>(
@@ -76,7 +77,10 @@ Future<void> setupLocator() async {
     ),
   );
   locator.registerLazySingleton<HomeViewModel>(
-    () => HomeViewModel(repository: locator<AnnouncementRepository>()),
+    () => HomeViewModel(
+      repository: locator<AnnouncementRepository>(),
+      addressViewModel: locator<AddressViewModel>(),
+    ),
   );
   locator.registerLazySingleton<AnnouncementViewModel>(
     () => AnnouncementViewModel(repository: locator<AnnouncementRepository>()),
