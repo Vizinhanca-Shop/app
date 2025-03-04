@@ -16,23 +16,40 @@ class LocationData {
 }
 
 class LocationServiceImpl implements LocationService {
+  LocationData? _cachedLocation;
+  Future<LocationData>? _currentLocationFuture;
+
   @override
   Future<LocationData> getCurrentLocation() async {
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (_cachedLocation != null) return _cachedLocation!;
 
+    if (_currentLocationFuture != null) {
+      return await _currentLocationFuture!;
+    }
+
+    _currentLocationFuture = _fetchLocation();
+    try {
+      final location = await _currentLocationFuture!;
+      _cachedLocation = location;
+      return location;
+    } finally {
+      _currentLocationFuture = null;
+    }
+  }
+
+  Future<LocationData> _fetchLocation() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       throw LocationException('Location services are disabled.');
     }
 
     LocationPermission permission = await Geolocator.checkPermission();
-
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
         throw LocationException('Location permissions are denied');
       }
     }
-
     if (permission == LocationPermission.deniedForever) {
       throw LocationException(
         'Location permissions are permanently denied, we cannot request permissions.',
@@ -40,7 +57,6 @@ class LocationServiceImpl implements LocationService {
     }
 
     final position = await Geolocator.getCurrentPosition();
-
     return LocationData(
       latitude: position.latitude,
       longitude: position.longitude,
