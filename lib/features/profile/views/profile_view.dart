@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vizinhanca_shop/data/services/auth_service.dart';
@@ -115,40 +114,10 @@ class _ProfileViewState extends State<ProfileView> {
       return;
     }
 
-    // Implementar a lógica para salvar as alterações
-    // Exemplo:
-    // widget.viewModel.updateUserProfile(
-    //   name: _nameController.text,
-    //   phone: _phoneController.text,
-    // );
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        padding: EdgeInsets.zero,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        content: Container(
-          color: Colors.white,
-          padding: const EdgeInsets.all(16),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            decoration: BoxDecoration(
-              color: AppColors.primary,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Center(
-              child: Text(
-                'Perfil atualizado com sucesso!',
-                style: GoogleFonts.sora(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
+    widget.viewModel.updateUser(
+      name: _nameController.text,
+      phone: _phoneController.text,
+      avatar: _avatar.value?.path,
     );
 
     setState(() {
@@ -219,24 +188,30 @@ class _ProfileViewState extends State<ProfileView> {
                                                   widget.viewModel.user.avatar,
                                                 )
                                                 as ImageProvider,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: AppColors.primary,
+                                          width: 2.0,
+                                        ),
+                                      ),
+                                    ),
                                   );
                                 },
                               ),
                               Positioned(
-                                bottom: -10,
-                                right: -10,
+                                bottom: -4,
+                                right: -4,
                                 child: IconButton(
                                   color: Colors.white,
                                   iconSize: 20,
                                   padding: const EdgeInsets.all(0),
-                                  icon: Icon(
-                                    Icons.edit,
-                                    color: Colors.grey[800],
-                                  ),
+                                  icon: Icon(Icons.edit, color: Colors.white),
                                   onPressed: _pickImage,
                                   style: ButtonStyle(
                                     backgroundColor: WidgetStateProperty.all(
-                                      Colors.white,
+                                      AppColors.primary,
                                     ),
                                     shape: WidgetStateProperty.all(
                                       const CircleBorder(),
@@ -294,20 +269,43 @@ class _ProfileViewState extends State<ProfileView> {
 
           return Padding(
             padding: const EdgeInsets.only(left: 16, right: 16, bottom: 40),
-            child: ElevatedButton(
-              onPressed: _hasChanges ? _saveChanges : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                disabledBackgroundColor: Colors.grey[300],
-                minimumSize: const Size(double.infinity, 48),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              child: const Text(
-                'Salvar Alterações',
-                style: TextStyle(fontSize: 16, color: Colors.white),
-              ),
+            child: ListenableBuilder(
+              listenable: widget.viewModel,
+              builder: (context, snapshot) {
+                return ElevatedButton(
+                  onPressed:
+                      _hasChanges && !widget.viewModel.isUpdating
+                          ? _saveChanges
+                          : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    disabledBackgroundColor: Colors.grey[300],
+                    minimumSize: const Size(double.infinity, 48),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child:
+                      widget.viewModel.isUpdating
+                          ? SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
+                            ),
+                          )
+                          : Text(
+                            'Salvar',
+                            style: GoogleFonts.sora(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white,
+                            ),
+                          ),
+                );
+              },
             ),
           );
         },
