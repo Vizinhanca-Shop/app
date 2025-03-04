@@ -22,6 +22,17 @@
 		<string>????</string>
 		<key>CFBundleVersion</key>
 		<string>$(FLUTTER_BUILD_NUMBER)</string>
+		<key>CFBundleURLTypes</key>
+		<array>
+			<dict>
+				<key>CFBundleTypeRole</key>
+				<string>Editor</string>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<string>com.googleusercontent.apps.642008022892-rgr5jgq65qj7k82g484sej76sg6n5u0f</string>
+				</array>
+			</dict>
+		</array>
 		<key>NSLocationWhenInUseUsageDescription</key>
 		<string>Permite que o aplicativo acesse sua localização para que possamos mostrar produtos próximos a você.</string>
 		<key>NSPhotoLibraryUsageDescription</key>
@@ -30,6 +41,8 @@
 		<string>Permite que o aplicativo acesse sua câmera para que você possa tirar fotos de seus anúncios.</string>
 		<key>NSMicrophoneUsageDescription</key>
 		<string>Permite que o aplicativo acesse seu microfone para que você possa gravar áudios de seus anúncios.</string>
+		<key>GIDClientID</key>
+		<string>642008022892-rgr5jgq65qj7k82g484sej76sg6n5u0f.apps.googleusercontent.com</string>
 		<key>LSRequiresIPhoneOS</key>
 		<true/>
 		<key>UILaunchStoryboardName</key>
