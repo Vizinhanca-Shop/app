@@ -93,12 +93,46 @@ class MyAnnouncementsViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> removeAnnouncement(String announcementId) async {
-    final index = _announcements.indexWhere(
-      (element) => element.id == announcementId,
-    );
-    if (index != -1) {
-      _announcements.removeAt(index);
+  Future<void> deleteAnnouncement(String announcementId) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      await _repository.deleteAnnouncement(announcementId);
+      await fetchAnnouncements();
+      ScaffoldMessenger.of(AppRoutes.navigatorKey.currentContext!).showSnackBar(
+        SnackBar(
+          padding: EdgeInsets.zero,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          duration: const Duration(seconds: 1),
+          content: Container(
+            color: Colors.white,
+            padding: const EdgeInsets.all(16),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              decoration: BoxDecoration(
+                color: AppColors.primary,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Center(
+                child: Text(
+                  'Anúncio excluído com sucesso!',
+                  style: GoogleFonts.sora(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    } catch (e) {
+      print(e);
+    } finally {
+      _isLoading = false;
       notifyListeners();
     }
   }
