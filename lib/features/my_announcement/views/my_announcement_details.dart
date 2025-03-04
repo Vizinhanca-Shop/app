@@ -192,6 +192,12 @@ class _MyAnnouncementDetailsState extends State<MyAnnouncementDetails> {
     }
   }
 
+  Future<void> _deleteAnnouncement() async {
+    await widget.myAnnouncementsViewModel.deleteAnnouncement(
+      widget.arguments.announcementId,
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -216,7 +222,41 @@ class _MyAnnouncementDetailsState extends State<MyAnnouncementDetails> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: Header(title: 'Editar Anúncio'),
+      appBar: Header(
+        title: 'Editar Anúncio',
+        actions: [
+          IconButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: const Text("Excluir Anúncio"),
+                    content: const Text(
+                      "Tem certeza que deseja excluir este anúncio?",
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text("Cancelar"),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          await _deleteAnnouncement();
+                          Navigator.pop(AppRoutes.navigatorKey.currentContext!);
+                          Navigator.pop(AppRoutes.navigatorKey.currentContext!);
+                        },
+                        child: const Text("Excluir"),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+            icon: const Icon(Icons.delete, color: Colors.red),
+          ),
+        ],
+      ),
       body: ListenableBuilder(
         listenable: widget.viewModel,
         builder: (context, snapshot) {
