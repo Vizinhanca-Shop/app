@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vizinhanca_shop/constants/categories.dart';
@@ -26,6 +27,7 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   final ScrollController _scrollController = ScrollController();
+  final TextEditingController _searchController = TextEditingController();
 
   void _handleAddressSearch() {
     Navigator.of(context).pushNamed(AppRoutes.addressSearch);
@@ -48,11 +50,24 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
+  Timer? _debounce;
+
+  void _handleSearch(String search) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      widget.homeViewModel.updateFilters(
+        FiltersModel(
+          radius: widget.homeViewModel.distance,
+          order: widget.homeViewModel.selectedOrder,
+          search: search,
+        ),
+      );
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    widget.addressViewModel.setInitialAddress();
-    widget.homeViewModel.handleGetAnnouncements();
     _scrollController.addListener(_onScroll);
   }
 
@@ -68,6 +83,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _debounce?.cancel();
     super.dispose();
   }
 
@@ -163,6 +179,8 @@ class _HomeViewState extends State<HomeView> {
               ),
               const SizedBox(height: 16),
               TextField(
+                controller: _searchController,
+                onChanged: _handleSearch,
                 decoration: InputDecoration(
                   prefixIcon: const Icon(Icons.search, color: Colors.grey),
                   suffixIcon: Row(
