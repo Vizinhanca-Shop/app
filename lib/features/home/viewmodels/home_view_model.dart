@@ -3,9 +3,11 @@ import 'package:vizinhanca_shop/data/models/announcement_model.dart';
 import 'package:vizinhanca_shop/data/models/category_model.dart';
 import 'package:vizinhanca_shop/data/models/filters_model.dart';
 import 'package:vizinhanca_shop/data/repositories/announcement_repository.dart';
+import 'package:vizinhanca_shop/features/address/viewmodels/address_view_model.dart';
 
 class HomeViewModel extends ChangeNotifier {
   final AnnouncementRepository _repository;
+  final AddressViewModel _addressViewModel;
   List<AnnouncementModel> _announcements = [];
 
   bool _isLoading = false;
@@ -16,9 +18,18 @@ class HomeViewModel extends ChangeNotifier {
   double _distance = 5;
   String _selectedOrder = 'Mais recentes';
   CategoryModel? _selectedCategory;
+  String? _search;
 
-  HomeViewModel({required AnnouncementRepository repository})
-    : _repository = repository;
+  HomeViewModel({
+    required AnnouncementRepository repository,
+    required AddressViewModel addressViewModel,
+  }) : _repository = repository,
+       _addressViewModel = addressViewModel {
+    _addressViewModel.setInitialAddress();
+    _addressViewModel.addListener(() {
+      handleGetAnnouncements();
+    });
+  }
 
   List<AnnouncementModel> get announcements => _announcements;
 
@@ -40,11 +51,14 @@ class HomeViewModel extends ChangeNotifier {
         radius: _distance,
         order: _selectedOrder,
         category: _selectedCategory?.id ?? '',
+        search: _search,
       );
       final result = await _repository.fetchAnnouncements(
         page: _currentPage,
         limit: 10,
         filters: filters,
+        latitude: _addressViewModel.selectedAddress?.latitude,
+        longitude: _addressViewModel.selectedAddress?.longitude,
       );
       final List<AnnouncementModel> newAnnouncements = result['announcements'];
       _totalPages = result['totalPages'];
@@ -72,13 +86,15 @@ class HomeViewModel extends ChangeNotifier {
   void updateFilters(FiltersModel filters) {
     _distance = filters.radius;
     _selectedOrder = filters.order;
-    _selectedCategory =
-        filters.category.isNotEmpty
-            ? (filters.category == _selectedCategory?.id
-                ? null
-                : CategoryModel(id: filters.category, name: ''))
-            : null;
 
+    if (filters.category.isNotEmpty) {
+      _selectedCategory =
+          filters.category == _selectedCategory?.id
+              ? null
+              : CategoryModel(id: filters.category, name: '');
+    }
+
+    _search = filters.search;
     _currentPage = 1;
     _hasMore = true;
 
