@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:vizinhanca_shop/constants/categories.dart';
 import 'package:vizinhanca_shop/data/models/announcement_model.dart';
 import 'package:vizinhanca_shop/data/models/category_model.dart';
+import 'package:vizinhanca_shop/data/models/create_announcement_model.dart';
 import 'package:vizinhanca_shop/data/repositories/announcement_repository.dart';
+import 'package:vizinhanca_shop/routes/app_routes.dart';
+import 'package:vizinhanca_shop/theme/app_colors.dart';
 
 class MyAnnouncementsViewModel extends ChangeNotifier {
   final AnnouncementRepository _repository;
@@ -10,20 +15,6 @@ class MyAnnouncementsViewModel extends ChangeNotifier {
   bool _isLoading = false;
   bool _isEditing = false;
 
-  final List<CategoryModel> _categories = [
-    CategoryModel(id: '1', name: 'Alimentos e Bebidas'),
-    CategoryModel(id: '2', name: 'Eletrônicos e Acessórios'),
-    CategoryModel(id: '3', name: 'Moda e Acessórios'),
-    CategoryModel(id: '4', name: 'Casa e Decoração'),
-    CategoryModel(id: '5', name: 'Serviços'),
-    CategoryModel(id: '6', name: 'Artesanato e Personalizados'),
-    CategoryModel(id: '7', name: 'Infantil'),
-    CategoryModel(id: '8', name: 'Automotivo'),
-    CategoryModel(id: '9', name: 'Esportes e Lazer'),
-    CategoryModel(id: '10', name: 'Beleza e Estética'),
-    CategoryModel(id: '11', name: 'Outros'),
-  ];
-
   MyAnnouncementsViewModel({required AnnouncementRepository repository})
     : _repository = repository;
 
@@ -31,14 +22,14 @@ class MyAnnouncementsViewModel extends ChangeNotifier {
   List<AnnouncementModel> get filteredAnnouncements => _filteredAnnouncements;
   bool get isLoading => _isLoading;
   bool get isEditing => _isEditing;
-  List<CategoryModel> get categories => _categories;
+  List<CategoryModel> get categories => defaultCategories;
 
-  Future<void> fetchAnnouncements({required String userId}) async {
+  Future<void> fetchAnnouncements() async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      final announcements = await _repository.fetchUserAnnouncements(userId);
+      final announcements = await _repository.fetchUserAnnouncements();
       _announcements.clear();
       _announcements.addAll(announcements);
       _filteredAnnouncements.clear();
@@ -52,9 +43,49 @@ class MyAnnouncementsViewModel extends ChangeNotifier {
     }
   }
 
-  void addAnnouncement(AnnouncementModel announcement) {
-    _announcements.add(announcement);
+  Future<void> createAnnouncement(CreateAnnouncementModel announcement) async {
+    _isLoading = true;
     notifyListeners();
+
+    try {
+      await _repository.createAnnouncement(announcement);
+      await fetchAnnouncements();
+      ScaffoldMessenger.of(AppRoutes.navigatorKey.currentContext!).showSnackBar(
+        SnackBar(
+          padding: EdgeInsets.zero,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          duration: const Duration(seconds: 1),
+          content: Container(
+            color: Colors.white,
+            padding: const EdgeInsets.all(16),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              decoration: BoxDecoration(
+                color: AppColors.primary,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Center(
+                child: Text(
+                  'Anúncio cadastrado com sucesso!',
+                  style: GoogleFonts.sora(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      Navigator.pop(AppRoutes.navigatorKey.currentContext!);
+    } catch (e) {
+      print(e);
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
   Future<void> removeAnnouncement(String announcementId) async {
@@ -73,13 +104,37 @@ class MyAnnouncementsViewModel extends ChangeNotifier {
 
     try {
       await _repository.updateAnnouncement(announcement);
-      final index = _announcements.indexWhere(
-        (element) => element.id == announcement.id,
+      await fetchAnnouncements();
+      ScaffoldMessenger.of(AppRoutes.navigatorKey.currentContext!).showSnackBar(
+        SnackBar(
+          padding: EdgeInsets.zero,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          duration: const Duration(seconds: 1),
+          content: Container(
+            color: Colors.white,
+            padding: const EdgeInsets.all(16),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              decoration: BoxDecoration(
+                color: AppColors.primary,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Center(
+                child: Text(
+                  'Anúncio atualizado com sucesso!',
+                  style: GoogleFonts.sora(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
       );
-      if (index != -1) {
-        _announcements[index] = announcement;
-        notifyListeners();
-      }
+      Navigator.pop(AppRoutes.navigatorKey.currentContext!);
     } catch (e) {
       print(e);
     } finally {

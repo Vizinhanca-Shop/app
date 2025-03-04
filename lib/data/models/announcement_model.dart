@@ -1,3 +1,4 @@
+import 'package:vizinhanca_shop/data/models/announcement_address_model.dart';
 import 'package:vizinhanca_shop/data/models/category_model.dart';
 import 'package:vizinhanca_shop/data/models/user_model.dart';
 
@@ -5,11 +6,11 @@ class AnnouncementModel {
   final String id;
   final String name;
   final String description;
-  final double price;
+  final int price;
   final List<String> images;
   final UserModel seller;
   final CategoryModel category;
-  final String address;
+  final AnnouncementAddressModel address;
 
   AnnouncementModel({
     required this.id,
@@ -24,14 +25,14 @@ class AnnouncementModel {
 
   factory AnnouncementModel.fromJson(Map<String, dynamic> json) {
     return AnnouncementModel(
-      id: json['id'],
+      id: json['_id'],
       name: json['name'],
       description: json['description'],
       price: json['price'],
       images: List<String>.from(json['images']),
       seller: UserModel.fromJson(json['seller']),
       category: CategoryModel.fromJson(json['category']),
-      address: json['address'],
+      address: AnnouncementAddressModel.fromJson(json['address']),
     );
   }
 
@@ -53,11 +54,11 @@ class AnnouncementModel {
       id: '',
       name: '',
       description: '',
-      price: 0.0,
+      price: 0,
       images: [],
       seller: UserModel.empty(),
       category: CategoryModel(id: '', name: ''),
-      address: '',
+      address: AnnouncementAddressModel.empty(),
     );
   }
 }

@@ -37,7 +37,7 @@ class _MyAnnouncementsViewState extends State<MyAnnouncementsView> {
     });
 
     if (isLoggedIn) {
-      widget.viewModel.fetchAnnouncements(userId: '2');
+      widget.viewModel.fetchAnnouncements();
     }
   }
 
@@ -52,6 +52,7 @@ class _MyAnnouncementsViewState extends State<MyAnnouncementsView> {
     if (isLoggedIn && !_isLoggedIn) {
       setState(() {
         _isLoggedIn = true;
+        widget.viewModel.fetchAnnouncements();
       });
     } else if (!isLoggedIn && _isLoggedIn) {
       setState(() {
@@ -210,33 +211,45 @@ class _MyAnnouncementsViewState extends State<MyAnnouncementsView> {
                 }
 
                 return Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 16),
-                        ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount:
-                              widget.viewModel.filteredAnnouncements.length,
-                          itemBuilder: (context, index) {
-                            final announcement =
-                                widget.viewModel.filteredAnnouncements[index];
-                            return MyAnnouncementPreview(
-                              announcement: announcement,
-                              onTap: () {
-                                Navigator.of(context).pushNamed(
-                                  AppRoutes.myAnnouncementDetails,
-                                  arguments: MyAnnouncementDetailsArguments(
-                                    announcementId: announcement.id,
-                                  ),
-                                );
-                              },
-                            );
-                          },
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 20),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount:
+                                    widget
+                                        .viewModel
+                                        .filteredAnnouncements
+                                        .length,
+                                itemBuilder: (context, index) {
+                                  final announcement =
+                                      widget
+                                          .viewModel
+                                          .filteredAnnouncements[index];
+                                  return MyAnnouncementPreview(
+                                    announcement: announcement,
+                                    onTap: () {
+                                      Navigator.of(context).pushNamed(
+                                        AppRoutes.myAnnouncementDetails,
+                                        arguments:
+                                            MyAnnouncementDetailsArguments(
+                                              announcementId: announcement.id,
+                                            ),
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 );
               },

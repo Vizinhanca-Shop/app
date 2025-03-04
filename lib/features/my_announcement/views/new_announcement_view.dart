@@ -1,9 +1,14 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:vizinhanca_shop/data/models/announcement_address_model.dart';
+import 'package:vizinhanca_shop/data/models/create_announcement_model.dart';
 import 'package:vizinhanca_shop/features/my_announcement/viewmodels/my_announcements_view_model.dart';
+import 'package:vizinhanca_shop/routes/app_routes.dart';
 import 'package:vizinhanca_shop/shared/custom_select.dart';
 import 'package:vizinhanca_shop/shared/custom_text_form_field.dart';
 import 'package:vizinhanca_shop/shared/header.dart';
@@ -20,7 +25,20 @@ class NewAnnouncementView extends StatefulWidget {
 
 class _NewAnnouncementViewState extends State<NewAnnouncementView> {
   final _formKey = GlobalKey<FormState>();
-  final _picker = ImagePicker();
+
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _priceController = TextEditingController();
+  final TextEditingController _categoryController = TextEditingController();
+
+  final TextEditingController _cepController = TextEditingController();
+  final TextEditingController _ruaController = TextEditingController();
+  final TextEditingController _bairroController = TextEditingController();
+  final TextEditingController _cidadeController = TextEditingController();
+  final TextEditingController _estadoController = TextEditingController();
+
+  // Imagens
+  final ImagePicker _picker = ImagePicker();
   List<XFile> _images = [];
 
   Future<void> _pickImages() async {
@@ -28,6 +46,117 @@ class _NewAnnouncementViewState extends State<NewAnnouncementView> {
     setState(() {
       _images = [..._images, ...pickedFiles].take(4).toList();
     });
+  }
+
+  Future<void> _fetchAddressFromCep(String cep) async {
+    final url = Uri.parse('https://viacep.com.br/ws/$cep/json/');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data != null && data['erro'] != true) {
+        setState(() {
+          _ruaController.text = data['logradouro'] ?? '';
+          _bairroController.text = data['bairro'] ?? '';
+          _cidadeController.text = data['localidade'] ?? '';
+          _estadoController.text = data['uf'] ?? '';
+        });
+      }
+    }
+  }
+
+  Future<Map<String, double>?> getCoordinatesFromAddress(String address) async {
+    final url = Uri.parse(
+      'https://nominatim.openstreetmap.org/search?format=json&q=$address',
+    );
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data.isNotEmpty) {
+        return {
+          'latitude': double.parse(data[0]['lat']),
+          'longitude': double.parse(data[0]['lon']),
+        };
+      }
+    }
+    return null;
+  }
+
+  Future<void> _submit() async {
+    if (_formKey.currentState!.validate()) {
+      if (_cepController.text.isEmpty ||
+          _ruaController.text.isEmpty ||
+          _bairroController.text.isEmpty ||
+          _cidadeController.text.isEmpty ||
+          _estadoController.text.isEmpty) {
+        showDialog(
+          context: context,
+          builder:
+              (context) => AlertDialog(
+                title: const Text("Endereço Incompleto"),
+                content: const Text(
+                  "Por favor, revise o endereço. Todos os campos devem estar preenchidos.",
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text("Ok"),
+                  ),
+                ],
+              ),
+        );
+        return;
+      }
+
+      final fullAddress =
+          "${_ruaController.text}, ${_bairroController.text}, ${_cidadeController.text} - ${_estadoController.text}";
+
+      final coordinates = await getCoordinatesFromAddress(fullAddress);
+
+      if (coordinates == null) {
+        showDialog(
+          context: AppRoutes.navigatorKey.currentContext!,
+          builder:
+              (context) => AlertDialog(
+                title: const Text("Localização Não Encontrada"),
+                content: const Text(
+                  "Não foi possível obter as coordenadas do endereço. Por favor, confirme ou ajuste os dados do endereço.",
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text("Ok"),
+                  ),
+                ],
+              ),
+        );
+        return;
+      }
+
+      final CreateAnnouncementModel announcement = CreateAnnouncementModel(
+        name: _nameController.text,
+        description: _descriptionController.text,
+        price: int.parse(_priceController.text),
+        address: AnnouncementAddressModel(
+          latitude: coordinates['latitude']!.toString(),
+          longitude: coordinates['longitude']!.toString(),
+          postalCode: _cepController.text,
+          road: _ruaController.text,
+          neighborhood: _bairroController.text,
+          city: _cidadeController.text,
+          state: _estadoController.text,
+        ),
+        category: widget.viewModel.categories.firstWhere(
+          (category) => category.id == _categoryController.text,
+        ),
+        images: _images.map((image) => image.path).toList(),
+        latitude: coordinates['latitude']!,
+        longitude: coordinates['longitude']!,
+      );
+
+      widget.viewModel.createAnnouncement(announcement);
+    }
   }
 
   @override
@@ -47,62 +176,55 @@ class _NewAnnouncementViewState extends State<NewAnnouncementView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CustomTextFormField(
-                controller: TextEditingController(),
-                labelText: 'Nome',
-                hintText: 'Nome do anúncio',
-                floatingLabelBehavior: FloatingLabelBehavior.always,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor, insira o nome do anúncio';
-                  }
-                  return null;
-                },
+              Text(
+                "Informações Principais",
+                style: GoogleFonts.sora(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.primary,
+                ),
               ),
               const SizedBox(height: 20),
               CustomTextFormField(
-                controller: TextEditingController(),
+                controller: _nameController,
+                labelText: 'Nome',
+                hintText: 'Nome do anúncio',
+                floatingLabelBehavior: FloatingLabelBehavior.always,
+                validator:
+                    (value) =>
+                        value == null || value.isEmpty
+                            ? 'Por favor, insira o nome do anúncio'
+                            : null,
+              ),
+              const SizedBox(height: 20),
+              CustomTextFormField(
+                controller: _descriptionController,
                 labelText: 'Descrição',
                 hintText: 'Descrição do anúncio',
                 maxLines: 3,
                 floatingLabelBehavior: FloatingLabelBehavior.always,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor, insira a descrição do anúncio';
-                  }
-                  return null;
-                },
+                validator:
+                    (value) =>
+                        value == null || value.isEmpty
+                            ? 'Por favor, insira a descrição do anúncio'
+                            : null,
               ),
               const SizedBox(height: 20),
               CustomTextFormField(
-                controller: TextEditingController(),
+                controller: _priceController,
                 labelText: 'Preço',
                 hintText: 'Preço do anúncio',
                 keyboardType: TextInputType.number,
                 floatingLabelBehavior: FloatingLabelBehavior.always,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor, insira o preço do anúncio';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              CustomTextFormField(
-                controller: TextEditingController(),
-                labelText: 'Endereço',
-                hintText: 'Endereço do anúncio',
-                floatingLabelBehavior: FloatingLabelBehavior.always,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor, insira o endereço do anúncio';
-                  }
-                  return null;
-                },
+                validator:
+                    (value) =>
+                        value == null || value.isEmpty
+                            ? 'Por favor, insira o preço do anúncio'
+                            : null,
               ),
               const SizedBox(height: 20),
               CustomSelect(
-                controller: TextEditingController(),
+                controller: _categoryController,
                 labelText: 'Categoria',
                 floatingLabelBehavior: FloatingLabelBehavior.always,
                 hintText: 'Selecione a categoria',
@@ -115,12 +237,93 @@ class _NewAnnouncementViewState extends State<NewAnnouncementView> {
                     }).toList(),
                 onChanged: (value) {},
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 30),
+
               Text(
-                'Imagens (até 4)',
-                style: GoogleFonts.sora(fontSize: 16, color: Colors.grey[800]),
+                "Endereço",
+                style: GoogleFonts.sora(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.primary,
+                ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 20),
+              CustomTextFormField(
+                controller: _cepController,
+                labelText: 'CEP',
+                hintText: 'Digite o CEP',
+                keyboardType: TextInputType.number,
+                floatingLabelBehavior: FloatingLabelBehavior.always,
+                onChanged: (value) {
+                  if (value.length == 8) {
+                    _fetchAddressFromCep(value);
+                  }
+                },
+                validator:
+                    (value) =>
+                        value == null || value.isEmpty
+                            ? 'Por favor, insira o CEP'
+                            : null,
+              ),
+              const SizedBox(height: 20),
+              CustomTextFormField(
+                controller: _ruaController,
+                labelText: 'Rua',
+                hintText: 'Digite a rua',
+                floatingLabelBehavior: FloatingLabelBehavior.always,
+                validator:
+                    (value) =>
+                        value == null || value.isEmpty
+                            ? 'Por favor, insira a rua'
+                            : null,
+              ),
+              const SizedBox(height: 20),
+              CustomTextFormField(
+                controller: _bairroController,
+                labelText: 'Bairro',
+                hintText: 'Digite o bairro',
+                floatingLabelBehavior: FloatingLabelBehavior.always,
+                validator:
+                    (value) =>
+                        value == null || value.isEmpty
+                            ? 'Por favor, insira o bairro'
+                            : null,
+              ),
+              const SizedBox(height: 20),
+              CustomTextFormField(
+                controller: _cidadeController,
+                labelText: 'Cidade',
+                hintText: 'Digite a cidade',
+                floatingLabelBehavior: FloatingLabelBehavior.always,
+                validator:
+                    (value) =>
+                        value == null || value.isEmpty
+                            ? 'Por favor, insira a cidade'
+                            : null,
+              ),
+              const SizedBox(height: 20),
+              CustomTextFormField(
+                controller: _estadoController,
+                labelText: 'Estado',
+                hintText: 'Digite o estado',
+                floatingLabelBehavior: FloatingLabelBehavior.always,
+                validator:
+                    (value) =>
+                        value == null || value.isEmpty
+                            ? 'Por favor, insira o estado'
+                            : null,
+              ),
+              const SizedBox(height: 30),
+
+              Text(
+                "Imagens (até 4)",
+                style: GoogleFonts.sora(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.primary,
+                ),
+              ),
+              const SizedBox(height: 20),
               Wrap(
                 spacing: 8.0,
                 runSpacing: 8.0,
@@ -186,23 +389,35 @@ class _NewAnnouncementViewState extends State<NewAnnouncementView> {
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.only(left: 16, right: 16, bottom: 40),
-        child: ElevatedButton(
-          onPressed: () {
-            if (_formKey.currentState!.validate()) {
-              print('Formulário válido');
-            }
+        child: ListenableBuilder(
+          listenable: widget.viewModel,
+          builder: (context, snapshot) {
+            return ElevatedButton(
+              onPressed: widget.viewModel.isLoading ? null : _submit,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                minimumSize: const Size(double.infinity, 48),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child:
+                  widget.viewModel.isLoading
+                      ? const SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
+                          ),
+                        ),
+                      )
+                      : const Text(
+                        'Cadastrar Anúncio',
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+            );
           },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primary,
-            minimumSize: const Size(double.infinity, 48),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-          child: const Text(
-            'Cadastrar Anúncio',
-            style: TextStyle(fontSize: 16, color: Colors.white),
-          ),
         ),
       ),
     );

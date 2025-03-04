@@ -1,35 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:vizinhanca_shop/data/models/filters_model.dart';
+import 'package:vizinhanca_shop/features/home/viewmodels/home_view_model.dart';
 import 'package:vizinhanca_shop/theme/app_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class Filters extends StatefulWidget {
-  const Filters({super.key});
+  final HomeViewModel homeViewModel;
+
+  const Filters({super.key, required this.homeViewModel});
 
   @override
   State<Filters> createState() => _FiltersState();
 }
 
 class _FiltersState extends State<Filters> {
-  RangeValues _priceRange = const RangeValues(1, 100);
-  double _distance = 5;
-  String _selectedOrder = 'Mais recentes';
+  late double _localDistance;
+  late String _localOrder;
 
-  void _handlePriceRangeChanged(RangeValues values) {
-    setState(() {
-      _priceRange = values;
-    });
+  @override
+  void initState() {
+    super.initState();
+    _localDistance = widget.homeViewModel.distance;
+    _localOrder = widget.homeViewModel.selectedOrder;
   }
 
   void _handleDistanceChanged(double value) {
     setState(() {
-      _distance = value;
+      _localDistance = value;
     });
   }
 
   void _handleOrderChanged(String value) {
     setState(() {
-      _selectedOrder = value;
+      _localOrder = value;
     });
+  }
+
+  void _applyFilters() {
+    final FiltersModel filters = FiltersModel(
+      order: _localOrder,
+      radius: _localDistance,
+    );
+
+    widget.homeViewModel.updateFilters(filters);
+    Navigator.of(context).pop();
   }
 
   @override
@@ -104,7 +118,7 @@ class _FiltersState extends State<Filters> {
                           ),
                           decoration: BoxDecoration(
                             color:
-                                _selectedOrder == 'Mais recentes'
+                                _localOrder == 'Mais recentes'
                                     ? AppColors.primary
                                     : null,
                             borderRadius: BorderRadius.circular(8),
@@ -113,7 +127,7 @@ class _FiltersState extends State<Filters> {
                             'Mais recentes',
                             style: GoogleFonts.sora(
                               color:
-                                  _selectedOrder == 'Mais recentes'
+                                  _localOrder == 'Mais recentes'
                                       ? Colors.white
                                       : Colors.grey[600],
                               fontSize: 16,
@@ -132,7 +146,7 @@ class _FiltersState extends State<Filters> {
                           ),
                           decoration: BoxDecoration(
                             color:
-                                _selectedOrder == 'Mais próximos'
+                                _localOrder == 'Mais próximos'
                                     ? AppColors.primary
                                     : null,
                             borderRadius: BorderRadius.circular(8),
@@ -141,93 +155,12 @@ class _FiltersState extends State<Filters> {
                             'Mais próximos',
                             style: GoogleFonts.sora(
                               color:
-                                  _selectedOrder == 'Mais próximos'
+                                  _localOrder == 'Mais próximos'
                                       ? Colors.white
                                       : Colors.grey[600],
                               fontSize: 16,
                             ),
                           ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 32),
-                  Text(
-                    'Faixa de preço:',
-                    style: GoogleFonts.sora(
-                      color: Colors.grey[600],
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'R\$ 0,00',
-                        style: GoogleFonts.sora(
-                          color: Colors.grey[600],
-                          fontSize: 14,
-                        ),
-                      ),
-                      Text(
-                        'R\$ 100,00',
-                        style: GoogleFonts.sora(
-                          color: Colors.grey[600],
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  SliderTheme(
-                    data: SliderThemeData(
-                      overlayShape: SliderComponentShape.noOverlay,
-                    ),
-                    child: RangeSlider(
-                      values: _priceRange,
-                      min: 1,
-                      max: 100,
-                      onChanged: (values) {
-                        _handlePriceRangeChanged(values);
-                      },
-                      activeColor: AppColors.primary,
-                      inactiveColor: Colors.grey[300],
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Text(
-                        'De: ',
-                        style: GoogleFonts.sora(
-                          color: Colors.grey[600],
-                          fontSize: 14,
-                        ),
-                      ),
-                      Text(
-                        'R\$ ${_priceRange.start.toInt()},00',
-                        style: GoogleFonts.sora(
-                          color: Colors.grey[600],
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Até: ',
-                        style: GoogleFonts.sora(
-                          color: Colors.grey[600],
-                          fontSize: 14,
-                        ),
-                      ),
-                      Text(
-                        'R\$ ${_priceRange.end.toInt()},00',
-                        style: GoogleFonts.sora(
-                          color: Colors.grey[600],
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ],
@@ -267,7 +200,7 @@ class _FiltersState extends State<Filters> {
                       overlayShape: SliderComponentShape.noOverlay,
                     ),
                     child: Slider(
-                      value: _distance,
+                      value: _localDistance,
                       min: 1,
                       max: 10,
                       onChanged: (value) {
@@ -288,7 +221,7 @@ class _FiltersState extends State<Filters> {
                         ),
                       ),
                       Text(
-                        '${_distance.toInt()} km',
+                        '${_localDistance.toInt()} km',
                         style: GoogleFonts.sora(
                           color: Colors.grey[600],
                           fontSize: 14,
@@ -302,19 +235,38 @@ class _FiltersState extends State<Filters> {
             ),
           ),
           const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              minimumSize: const Size(double.infinity, 48),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            child: const Text(
-              'Aplicar filtros',
-              style: TextStyle(fontSize: 16, color: Colors.white),
-            ),
+          ListenableBuilder(
+            listenable: widget.homeViewModel,
+            builder: (context, snapshot) {
+              return ElevatedButton(
+                onPressed:
+                    widget.homeViewModel.isLoading ? null : _applyFilters,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  minimumSize: const Size(double.infinity, 48),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child:
+                    widget.homeViewModel.isLoading
+                        ? const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation(Colors.white),
+                          ),
+                        )
+                        : Text(
+                          'Aplicar filtros',
+                          style: GoogleFonts.sora(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+              );
+            },
           ),
           const SizedBox(height: 40),
         ],
@@ -324,10 +276,13 @@ class _FiltersState extends State<Filters> {
 }
 
 class FiltersBottomSheetHelper {
-  static void showFiltersBottomSheet(BuildContext context) {
+  static void showFiltersBottomSheet(
+    BuildContext context, {
+    required HomeViewModel homeViewModel,
+  }) {
     showModalBottomSheet<void>(
       context: context,
-      builder: (context) => const Filters(),
+      builder: (context) => Filters(homeViewModel: homeViewModel),
       clipBehavior: Clip.antiAliasWithSaveLayer,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(

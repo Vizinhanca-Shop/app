@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:vizinhanca_shop/constants/categories.dart';
+import 'package:vizinhanca_shop/data/models/category_model.dart';
+import 'package:vizinhanca_shop/data/models/filters_model.dart';
 import 'package:vizinhanca_shop/features/address/viewmodels/address_view_model.dart';
 import 'package:vizinhanca_shop/features/home/viewmodels/home_view_model.dart';
 import 'package:vizinhanca_shop/features/home/views/widgets/filters.dart';
@@ -22,12 +25,27 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  final ScrollController _scrollController = ScrollController();
+
   void _handleAddressSearch() {
     Navigator.of(context).pushNamed(AppRoutes.addressSearch);
   }
 
   void _handleOpenFilters() {
-    FiltersBottomSheetHelper.showFiltersBottomSheet(context);
+    FiltersBottomSheetHelper.showFiltersBottomSheet(
+      context,
+      homeViewModel: widget.homeViewModel,
+    );
+  }
+
+  void _handleCategoryChange(CategoryModel category) {
+    widget.homeViewModel.updateFilters(
+      FiltersModel(
+        radius: widget.homeViewModel.distance,
+        order: widget.homeViewModel.selectedOrder,
+        category: category.id,
+      ),
+    );
   }
 
   @override
@@ -35,6 +53,22 @@ class _HomeViewState extends State<HomeView> {
     super.initState();
     widget.addressViewModel.setInitialAddress();
     widget.homeViewModel.handleGetAnnouncements();
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      if (widget.homeViewModel.hasMore && !widget.homeViewModel.isLoading) {
+        widget.homeViewModel.handleGetAnnouncements(loadMore: true);
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -180,28 +214,52 @@ class _HomeViewState extends State<HomeView> {
           children: [
             SizedBox(
               height: 48,
-              child: ListView.builder(
-                shrinkWrap: true,
-                scrollDirection: Axis.horizontal,
-                itemCount: 10,
-                itemBuilder: (context, index) {
-                  return Container(
-                    margin: const EdgeInsets.only(right: 16.0),
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    height: 48,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(50),
-                      color: index == 0 ? AppColors.primary : Colors.grey[100],
-                    ),
-                    child: Center(
-                      child: Text(
-                        'Categoria $index',
-                        style: GoogleFonts.sora(
-                          color: index == 0 ? Colors.white : Colors.grey[600],
-                          fontWeight: FontWeight.w600,
+              child: ListenableBuilder(
+                listenable: widget.homeViewModel,
+                builder: (context, snapshot) {
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    scrollDirection: Axis.horizontal,
+                    itemCount: defaultCategories.length,
+                    itemBuilder: (context, index) {
+                      final category = defaultCategories[index];
+
+                      return GestureDetector(
+                        onTap: () => _handleCategoryChange(category),
+                        child: Container(
+                          margin: const EdgeInsets.only(right: 16.0),
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          height: 48,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(50),
+                            color:
+                                category.id ==
+                                        widget
+                                            .homeViewModel
+                                            .selectedCategory
+                                            ?.id
+                                    ? AppColors.primary
+                                    : Colors.grey[100],
+                          ),
+                          child: Center(
+                            child: Text(
+                              category.name,
+                              style: GoogleFonts.sora(
+                                color:
+                                    category.id ==
+                                            widget
+                                                .homeViewModel
+                                                .selectedCategory
+                                                ?.id
+                                        ? Colors.white
+                                        : Colors.grey[600],
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
+                      );
+                    },
                   );
                 },
               ),
@@ -211,8 +269,8 @@ class _HomeViewState extends State<HomeView> {
               listenable: widget.homeViewModel,
               builder: (context, snapshot) {
                 if (widget.homeViewModel.isLoading) {
-                  return Expanded(
-                    child: const Center(
+                  return const Expanded(
+                    child: Center(
                       child: CircularProgressIndicator(
                         valueColor: AlwaysStoppedAnimation(AppColors.primary),
                       ),
@@ -220,7 +278,8 @@ class _HomeViewState extends State<HomeView> {
                   );
                 }
 
-                if (widget.homeViewModel.announcements.isEmpty) {
+                if (widget.homeViewModel.announcements.isEmpty &&
+                    !widget.homeViewModel.isLoading) {
                   return Expanded(
                     child: Center(
                       child: Transform.translate(
@@ -239,6 +298,7 @@ class _HomeViewState extends State<HomeView> {
 
                 return Expanded(
                   child: GridView.builder(
+                    controller: _scrollController,
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
@@ -246,11 +306,29 @@ class _HomeViewState extends State<HomeView> {
                           crossAxisSpacing: 16,
                           mainAxisSpacing: 16,
                         ),
-                    itemCount: widget.homeViewModel.announcements.length,
+                    itemCount:
+                        widget.homeViewModel.announcements.length +
+                        (widget.homeViewModel.hasMore ? 1 : 0),
                     itemBuilder: (context, index) {
-                      final announcement =
-                          widget.homeViewModel.announcements[index];
-                      return AnnouncementPreview(announcement: announcement);
+                      if (index < widget.homeViewModel.announcements.length) {
+                        final announcement =
+                            widget.homeViewModel.announcements[index];
+                        return AnnouncementPreview(announcement: announcement);
+                      } else {
+                        return Center(
+                          child: Transform.translate(
+                            offset: Offset(
+                              MediaQuery.of(context).size.width / 4,
+                              -100,
+                            ),
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation(
+                                AppColors.primary,
+                              ),
+                            ),
+                          ),
+                        );
+                      }
                     },
                   ),
                 );

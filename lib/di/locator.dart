@@ -44,6 +44,8 @@ Future<void> setupLocator() async {
     () => AnnouncementRepository(
       client: locator<HttpClient>(),
       appConfig: locator<AppConfig>(),
+      localStorageService: locator<LocalStorageService>(),
+      locationService: locator<LocationService>(),
     ),
   );
   locator.registerLazySingleton<ProfileRepository>(

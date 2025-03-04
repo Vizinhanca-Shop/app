@@ -1,11 +1,15 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:vizinhanca_shop/data/models/announcement_address_model.dart';
 import 'package:vizinhanca_shop/data/models/announcement_model.dart';
 import 'package:vizinhanca_shop/features/announcement/viewmodels/announcement_view_model.dart';
 import 'package:vizinhanca_shop/features/my_announcement/viewmodels/my_announcements_view_model.dart';
+import 'package:vizinhanca_shop/routes/app_routes.dart';
 import 'package:vizinhanca_shop/shared/custom_select.dart';
 import 'package:vizinhanca_shop/shared/custom_text_form_field.dart';
 import 'package:vizinhanca_shop/shared/header.dart';
@@ -13,7 +17,6 @@ import 'package:vizinhanca_shop/theme/app_colors.dart';
 
 class MyAnnouncementDetailsArguments {
   final String announcementId;
-
   const MyAnnouncementDetailsArguments({required this.announcementId});
 }
 
@@ -42,20 +45,29 @@ class _MyAnnouncementDetailsState extends State<MyAnnouncementDetails> {
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _priceController = TextEditingController();
-  final _addressController = TextEditingController();
   final _categoryController = TextEditingController();
+
+  final _cepController = TextEditingController();
+  final _ruaController = TextEditingController();
+  final _bairroController = TextEditingController();
+  final _cidadeController = TextEditingController();
+  final _estadoController = TextEditingController();
 
   void _fetchAnnouncement() async {
     await widget.viewModel.handleGetAnnouncement(
       widget.arguments.announcementId,
     );
-
     final announcement = widget.viewModel.announcement;
     _nameController.text = announcement.name;
     _descriptionController.text = announcement.description;
     _priceController.text = announcement.price.toString();
-    _addressController.text = announcement.address;
     _categoryController.text = announcement.category.id;
+
+    _cepController.text = announcement.address.postalCode;
+    _ruaController.text = announcement.address.road;
+    _bairroController.text = announcement.address.neighborhood;
+    _cidadeController.text = announcement.address.city;
+    _estadoController.text = announcement.address.state;
 
     if (announcement.images.isNotEmpty) {
       _loadImages(announcement.images);
@@ -76,23 +88,113 @@ class _MyAnnouncementDetailsState extends State<MyAnnouncementDetails> {
     });
   }
 
-  void _saveAnnouncement() async {
+  Future<void> _fetchAddressFromCep(String cep) async {
+    final url = Uri.parse('https://viacep.com.br/ws/$cep/json/');
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data != null && data['erro'] != true) {
+        setState(() {
+          _ruaController.text = data['logradouro'] ?? '';
+          _bairroController.text = data['bairro'] ?? '';
+          _cidadeController.text = data['localidade'] ?? '';
+          _estadoController.text = data['uf'] ?? '';
+        });
+      }
+    }
+  }
+
+  Future<Map<String, double>?> getCoordinatesFromAddress(String address) async {
+    final url = Uri.parse(
+      'https://nominatim.openstreetmap.org/search?format=json&q=$address',
+    );
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data.isNotEmpty) {
+        return {
+          'latitude': double.parse(data[0]['lat']),
+          'longitude': double.parse(data[0]['lon']),
+        };
+      }
+    }
+    return null;
+  }
+
+  Future<void> _saveAnnouncement() async {
     if (_formKey.currentState!.validate()) {
+      if (_cepController.text.isEmpty ||
+          _ruaController.text.isEmpty ||
+          _bairroController.text.isEmpty ||
+          _cidadeController.text.isEmpty ||
+          _estadoController.text.isEmpty) {
+        showDialog(
+          context: context,
+          builder:
+              (context) => AlertDialog(
+                title: const Text("Endereço Incompleto"),
+                content: const Text(
+                  "Por favor, revise o endereço. Todos os campos devem estar preenchidos.",
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text("Ok"),
+                  ),
+                ],
+              ),
+        );
+        return;
+      }
+
+      final fullAddress =
+          "${_ruaController.text}, ${_bairroController.text}, ${_cidadeController.text} - ${_estadoController.text}";
+
+      final coordinates = await getCoordinatesFromAddress(fullAddress);
+
+      if (coordinates == null) {
+        showDialog(
+          context: AppRoutes.navigatorKey.currentContext!,
+          builder:
+              (context) => AlertDialog(
+                title: const Text("Localização Não Encontrada"),
+                content: const Text(
+                  "Não foi possível obter as coordenadas do endereço. Por favor, confirme ou ajuste os dados do endereço.",
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text("Ok"),
+                  ),
+                ],
+              ),
+        );
+        return;
+      }
+
       final name = _nameController.text;
       final description = _descriptionController.text;
-      final price = double.parse(_priceController.text);
-      final address = _addressController.text;
+      final price = int.parse(_priceController.text);
       final categoryId = _categoryController.text;
-
       final images = _images.map((image) => image.path).toList();
       images.addAll(_networkImageUrls);
+
+      final announcementAddress = AnnouncementAddressModel(
+        latitude: coordinates['latitude']!.toString(),
+        longitude: coordinates['longitude']!.toString(),
+        postalCode: _cepController.text,
+        road: _ruaController.text,
+        neighborhood: _bairroController.text,
+        city: _cidadeController.text,
+        state: _estadoController.text,
+      );
 
       final announcement = AnnouncementModel(
         id: widget.arguments.announcementId,
         name: name,
         description: description,
         price: price,
-        address: address,
+        address: announcementAddress,
         category: widget.viewModel.categories.firstWhere(
           (category) => category.id == categoryId,
         ),
@@ -101,11 +203,6 @@ class _MyAnnouncementDetailsState extends State<MyAnnouncementDetails> {
       );
 
       await widget.myAnnouncementsViewModel.updateAnnouncement(announcement);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Anúncio atualizado com sucesso!')),
-      );
-      Navigator.pop(context);
     }
   }
 
@@ -120,8 +217,12 @@ class _MyAnnouncementDetailsState extends State<MyAnnouncementDetails> {
     _nameController.dispose();
     _descriptionController.dispose();
     _priceController.dispose();
-    _addressController.dispose();
     _categoryController.dispose();
+    _cepController.dispose();
+    _ruaController.dispose();
+    _bairroController.dispose();
+    _cidadeController.dispose();
+    _estadoController.dispose();
     super.dispose();
   }
 
@@ -151,6 +252,15 @@ class _MyAnnouncementDetailsState extends State<MyAnnouncementDetails> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Text(
+                        "Informações Principais",
+                        style: GoogleFonts.sora(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
                       CustomTextFormField(
                         controller: _nameController,
                         labelText: 'Nome',
@@ -192,19 +302,6 @@ class _MyAnnouncementDetailsState extends State<MyAnnouncementDetails> {
                         },
                       ),
                       const SizedBox(height: 20),
-                      CustomTextFormField(
-                        controller: _addressController,
-                        labelText: 'Endereço',
-                        hintText: 'Endereço do anúncio',
-                        floatingLabelBehavior: FloatingLabelBehavior.always,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Por favor, insira o endereço do anúncio';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 20),
                       CustomSelect(
                         controller: _categoryController,
                         labelText: 'Categoria',
@@ -221,15 +318,96 @@ class _MyAnnouncementDetailsState extends State<MyAnnouncementDetails> {
                           _categoryController.text = value;
                         },
                       ),
+                      const SizedBox(height: 30),
+                      Text(
+                        "Endereço",
+                        style: GoogleFonts.sora(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.primary,
+                        ),
+                      ),
                       const SizedBox(height: 20),
+                      CustomTextFormField(
+                        controller: _cepController,
+                        labelText: 'CEP',
+                        hintText: 'Digite o CEP',
+                        keyboardType: TextInputType.number,
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                        onChanged: (value) {
+                          if (value.length == 8) {
+                            _fetchAddressFromCep(value);
+                          }
+                        },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Por favor, insira o CEP';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      CustomTextFormField(
+                        controller: _ruaController,
+                        labelText: 'Rua',
+                        hintText: 'Digite a rua',
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Por favor, insira a rua';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      CustomTextFormField(
+                        controller: _bairroController,
+                        labelText: 'Bairro',
+                        hintText: 'Digite o bairro',
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Por favor, insira o bairro';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      CustomTextFormField(
+                        controller: _cidadeController,
+                        labelText: 'Cidade',
+                        hintText: 'Digite a cidade',
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Por favor, insira a cidade';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      CustomTextFormField(
+                        controller: _estadoController,
+                        labelText: 'Estado',
+                        hintText: 'Digite o estado',
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Por favor, insira o estado';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 30),
                       Text(
                         'Imagens (até 4)',
                         style: GoogleFonts.sora(
                           fontSize: 16,
-                          color: Colors.grey[800],
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.primary,
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 20),
                       Wrap(
                         spacing: 8.0,
                         runSpacing: 8.0,
@@ -339,7 +517,6 @@ class _MyAnnouncementDetailsState extends State<MyAnnouncementDetails> {
           if (widget.viewModel.isLoading) {
             return SizedBox.shrink();
           }
-
           return Padding(
             padding: const EdgeInsets.only(left: 16, right: 16, bottom: 40),
             child: ListenableBuilder(
