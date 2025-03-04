@@ -43,7 +43,7 @@ class DeleteAccountDialog extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Essa ação é irreversível.',
+                  'Essa ação irá excluir permanentemente sua conta e todos os seus anúncios. Esses dados não poderão ser recuperados.',
                   style: GoogleFonts.lato(
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
@@ -51,40 +51,77 @@ class DeleteAccountDialog extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 26),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.3,
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: const Text(
-                          'Cancelar',
-                          style: TextStyle(fontSize: 16, color: Colors.grey),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.3,
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red[400],
-                          minimumSize: const Size(double.infinity, 48),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                ListenableBuilder(
+                  listenable: profileViewModel,
+                  builder: (context, snapshot) {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.3,
+                          child: TextButton(
+                            onPressed:
+                                profileViewModel.isDeleting
+                                    ? null
+                                    : Navigator.of(context).pop,
+                            child:
+                                profileViewModel.isDeleting
+                                    ? SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor: AlwaysStoppedAnimation(
+                                          Colors.grey[800],
+                                        ),
+                                      ),
+                                    )
+                                    : Text(
+                                      'Cancelar',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.grey[800],
+                                      ),
+                                    ),
                           ),
                         ),
-                        child: const Text(
-                          'Excluir',
-                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        const SizedBox(width: 16),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.3,
+                          child: ElevatedButton(
+                            onPressed:
+                                profileViewModel.isDeleting ? null : onDelete,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red[400],
+                              minimumSize: const Size(double.infinity, 48),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child:
+                                profileViewModel.isDeleting
+                                    ? SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor: AlwaysStoppedAnimation(
+                                          Colors.white,
+                                        ),
+                                      ),
+                                    )
+                                    : Text(
+                                      'Excluir',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ],
+                      ],
+                    );
+                  },
                 ),
               ],
             ),
