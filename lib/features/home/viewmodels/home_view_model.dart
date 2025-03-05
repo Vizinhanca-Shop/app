@@ -10,7 +10,7 @@ class HomeViewModel extends ChangeNotifier {
   final AddressViewModel _addressViewModel;
   List<AnnouncementModel> _announcements = [];
 
-  bool _isLoading = false;
+  bool _isLoading = true;
   int _currentPage = 1;
   int _totalPages = 1;
   bool _hasMore = true;
@@ -43,7 +43,6 @@ class HomeViewModel extends ChangeNotifier {
   Future<void> handleGetAnnouncements({bool loadMore = false}) async {
     if (loadMore && !_hasMore) return;
 
-    _isLoading = true;
     notifyListeners();
 
     try {
@@ -84,6 +83,9 @@ class HomeViewModel extends ChangeNotifier {
   }
 
   void updateFilters(FiltersModel filters) {
+    _isLoading = true;
+    notifyListeners();
+
     _distance = filters.radius;
     _selectedOrder = filters.order;
 
