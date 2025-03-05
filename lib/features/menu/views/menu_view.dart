@@ -46,76 +46,74 @@ class MenuView extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: Header(title: 'Menu', hideBackButton: true),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Seção de opções de conta
-              Text(
-                'Opções de Conta',
-                style: GoogleFonts.sora(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey[800],
-                ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Seção de opções de conta
+            Text(
+              'Opções de Conta',
+              style: GoogleFonts.sora(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey[800],
               ),
-              const SizedBox(height: 16),
+            ),
+            const SizedBox(height: 16),
 
-              // Lista de opções com cards
-              OptionCard(
-                icon: Icons.edit,
-                title: 'Editar Perfil',
-                subtitle: 'Atualize suas informações pessoais',
-                color: Colors.blue,
-                onTap: _editProfile,
-              ),
+            // Lista de opções com cards
+            OptionCard(
+              icon: Icons.edit,
+              title: 'Editar Perfil',
+              subtitle: 'Atualize suas informações pessoais',
+              color: Colors.blue,
+              onTap: _editProfile,
+            ),
 
-              const SizedBox(height: 12),
+            const SizedBox(height: 12),
 
-              OptionCard(
-                icon: Icons.logout,
-                title: 'Sair da Conta',
-                subtitle: 'Encerrar a sessão atual',
-                color: Colors.orange,
-                onTap: _logout,
-              ),
+            OptionCard(
+              icon: Icons.logout,
+              title: 'Sair da Conta',
+              subtitle: 'Encerrar a sessão atual',
+              color: Colors.orange,
+              onTap: _logout,
+            ),
 
-              const SizedBox(height: 32),
+            const SizedBox(height: 32),
 
-              // Seção de configurações avançadas
-              Text(
-                'Configurações Avançadas',
+            // Seção de configurações avançadas
+            Text(
+              'Configurações Avançadas',
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+
+            OptionCard(
+              icon: Icons.delete_forever,
+              title: 'Excluir Conta',
+              subtitle: 'Remover permanentemente sua conta',
+              color: Colors.red,
+              onTap: _deleteAccount,
+              isDangerous: true,
+            ),
+
+            const Spacer(),
+
+            // Rodapé com versão do app
+            Center(
+              child: Text(
+                'Vizinhança Shop v1.0.0',
                 style: Theme.of(
                   context,
-                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                ).textTheme.bodySmall?.copyWith(color: Colors.grey[500]),
               ),
-              const SizedBox(height: 16),
-
-              OptionCard(
-                icon: Icons.delete_forever,
-                title: 'Excluir Conta',
-                subtitle: 'Remover permanentemente sua conta',
-                color: Colors.red,
-                onTap: _deleteAccount,
-                isDangerous: true,
-              ),
-
-              const Spacer(),
-
-              // Rodapé com versão do app
-              Center(
-                child: Text(
-                  'Vizinhança Shop v1.0.0',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodySmall?.copyWith(color: Colors.grey[500]),
-                ),
-              ),
-              const SizedBox(height: 8),
-            ],
-          ),
+            ),
+            const SizedBox(height: 8),
+          ],
         ),
       ),
     );

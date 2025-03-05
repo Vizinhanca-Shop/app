@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:vizinhanca_shop/data/models/announcement_address_model.dart';
@@ -7,10 +8,12 @@ import 'package:vizinhanca_shop/data/models/announcement_model.dart';
 import 'package:vizinhanca_shop/features/announcement/viewmodels/announcement_view_model.dart';
 import 'package:vizinhanca_shop/features/my_announcement/viewmodels/my_announcements_view_model.dart';
 import 'package:vizinhanca_shop/routes/app_routes.dart';
+import 'package:vizinhanca_shop/shared/currency_input_formatter.dart';
 import 'package:vizinhanca_shop/shared/custom_select.dart';
 import 'package:vizinhanca_shop/shared/custom_text_form_field.dart';
 import 'package:vizinhanca_shop/shared/header.dart';
 import 'package:vizinhanca_shop/theme/app_colors.dart';
+import 'package:vizinhanca_shop/utils/parse_price.dart';
 
 class MyAnnouncementDetailsArguments {
   final String announcementId;
@@ -57,7 +60,9 @@ class _MyAnnouncementDetailsState extends State<MyAnnouncementDetails> {
     final announcement = widget.viewModel.announcement;
     _nameController.text = announcement.name;
     _descriptionController.text = announcement.description;
-    _priceController.text = announcement.price.toString();
+    _priceController.text = CurrencyInputFormatter.formatPrice(
+      announcement.price,
+    );
     _categoryController.text = announcement.category.id;
 
     _cepController.text = announcement.address.postalCode;
@@ -160,7 +165,7 @@ class _MyAnnouncementDetailsState extends State<MyAnnouncementDetails> {
 
       final name = _nameController.text;
       final description = _descriptionController.text;
-      final price = int.parse(_priceController.text);
+      final priceInCents = parsePrice(_priceController.text);
       final categoryId = _categoryController.text;
       final images = _images.map((image) => image.path).toList();
       images.addAll(_networkImageUrls);
@@ -179,7 +184,7 @@ class _MyAnnouncementDetailsState extends State<MyAnnouncementDetails> {
         id: widget.arguments.announcementId,
         name: name,
         description: description,
-        price: price,
+        price: priceInCents,
         address: announcementAddress,
         category: widget.viewModel.categories.firstWhere(
           (category) => category.id == categoryId,
@@ -317,7 +322,7 @@ class _MyAnnouncementDetailsState extends State<MyAnnouncementDetails> {
                       CustomTextFormField(
                         controller: _priceController,
                         labelText: 'Preço',
-                        hintText: 'Preço do anúncio',
+                        hintText: 'R\$ 0,00',
                         keyboardType: TextInputType.number,
                         floatingLabelBehavior: FloatingLabelBehavior.always,
                         validator: (value) {
@@ -326,6 +331,7 @@ class _MyAnnouncementDetailsState extends State<MyAnnouncementDetails> {
                           }
                           return null;
                         },
+                        inputFormatters: [CurrencyInputFormatter()],
                       ),
                       const SizedBox(height: 20),
                       CustomSelect(
@@ -343,6 +349,12 @@ class _MyAnnouncementDetailsState extends State<MyAnnouncementDetails> {
                         onChanged: (value) {
                           _categoryController.text = value;
                         },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Por favor, selecione a categoria';
+                          }
+                          return null;
+                        },
                       ),
                       const SizedBox(height: 30),
                       Text(
@@ -357,7 +369,7 @@ class _MyAnnouncementDetailsState extends State<MyAnnouncementDetails> {
                       CustomTextFormField(
                         controller: _cepController,
                         labelText: 'CEP',
-                        hintText: 'Digite o CEP',
+                        hintText: 'Digite o CEP (somente números)',
                         keyboardType: TextInputType.number,
                         floatingLabelBehavior: FloatingLabelBehavior.always,
                         onChanged: (value) {
@@ -371,6 +383,10 @@ class _MyAnnouncementDetailsState extends State<MyAnnouncementDetails> {
                           }
                           return null;
                         },
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(8),
+                        ],
                       ),
                       const SizedBox(height: 20),
                       CustomTextFormField(

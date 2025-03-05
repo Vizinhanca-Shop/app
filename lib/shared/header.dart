@@ -22,56 +22,36 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       elevation: 0,
       backgroundColor: backgroundColor,
-      leadingWidth: MediaQuery.of(context).size.width,
       toolbarHeight: 80,
       scrolledUnderElevation: 0,
-      leading: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            hideBackButton
-                ? const SizedBox(width: 40)
-                : SizedBox(
-                  width: 40,
-                  child: IconButton(
-                    onPressed: () {
-                      if (onPressed != null) {
-                        onPressed!();
-                      } else {
-                        Navigator.of(context).pop();
-                      }
-                    },
-                    icon: Icon(
-                      Icons.arrow_back_rounded,
-                      color: Colors.grey[800],
-                      size: 18,
-                    ),
-                  ),
-                ),
-            Flexible(
-              child: Text(
-                title,
-                style: GoogleFonts.sora(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
+      leading:
+          hideBackButton
+              ? null
+              : IconButton(
+                onPressed: () {
+                  if (onPressed != null) {
+                    onPressed!();
+                  } else {
+                    Navigator.of(context).pop();
+                  }
+                },
+                icon: Icon(
+                  Icons.arrow_back_rounded,
                   color: Colors.grey[800],
+                  size: 18,
                 ),
-                overflow: TextOverflow.ellipsis,
               ),
-            ),
-            Builder(
-              builder: (context) {
-                if (actions != null) {
-                  return Row(children: actions!);
-                }
-
-                return const SizedBox(width: 40);
-              },
-            ),
-          ],
+      title: Text(
+        title,
+        style: GoogleFonts.sora(
+          fontSize: 18,
+          fontWeight: FontWeight.w500,
+          color: Colors.grey[800],
         ),
+        overflow: TextOverflow.ellipsis,
       ),
+      centerTitle: true,
+      actions: actions,
     );
   }
 

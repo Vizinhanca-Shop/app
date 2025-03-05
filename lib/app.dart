@@ -11,9 +11,11 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MediaQuery(
-      data: MediaQueryData.fromView(
-        WidgetsBinding.instance.platformDispatcher.views.first,
-      ).copyWith(textScaler: const TextScaler.linear(1.0)),
+      data: MediaQuery.of(context).copyWith(
+        textScaler: const TextScaler.linear(1.0),
+        viewPadding: EdgeInsets.zero,
+        viewInsets: EdgeInsets.zero,
+      ),
       child: MaterialApp(
         navigatorKey: AppRoutes.navigatorKey,
         title: 'Vizinhança Shop',

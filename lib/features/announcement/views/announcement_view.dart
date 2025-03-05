@@ -5,7 +5,6 @@ import 'package:vizinhanca_shop/features/announcement/views/widgets/images_carou
 import 'package:vizinhanca_shop/routes/app_routes.dart';
 import 'package:vizinhanca_shop/shared/header.dart';
 import 'package:vizinhanca_shop/theme/app_colors.dart';
-import 'package:intl/intl.dart' as intl;
 import 'package:url_launcher/url_launcher.dart';
 
 class AnnouncementViewArguments {
@@ -39,7 +38,7 @@ class _AnnouncementViewState extends State<AnnouncementView> {
             : (cleanNumber.startsWith('55') ? cleanNumber : '55$cleanNumber');
 
     final message =
-        'Olá, vi seu anúncio no Vizinhança Shop e gostaria de mais informações.';
+        'Olá, vi seu anúncio no Vizinhança Shop e gostaria de mais informações sobre *${widget.viewModel.announcement.name}*.';
 
     final encodedMessage = Uri.encodeComponent(message);
 
@@ -109,10 +108,7 @@ class _AnnouncementViewState extends State<AnnouncementView> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            intl.NumberFormat.currency(
-                              locale: 'pt_BR',
-                              symbol: 'R\$',
-                            ).format(widget.viewModel.announcement.price),
+                            widget.viewModel.announcement.formattedPrice(),
                             style: GoogleFonts.sora(
                               fontSize: 24,
                               color: Colors.grey[800],
@@ -173,7 +169,7 @@ class _AnnouncementViewState extends State<AnnouncementView> {
                       Divider(color: Colors.grey[300]),
                       const SizedBox(height: 16),
                       Text(
-                        'Vendedor',
+                        'Anunciante',
                         style: GoogleFonts.sora(
                           fontSize: 16,
                           color: Colors.grey[800],

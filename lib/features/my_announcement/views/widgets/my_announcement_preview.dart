@@ -54,7 +54,7 @@ class MyAnnouncementPreview extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'R\$ ${announcement.price.toStringAsFixed(2)}',
+                    announcement.formattedPrice(),
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w400,

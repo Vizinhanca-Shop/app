@@ -73,6 +73,7 @@ class AnnouncementRepository {
 
     try {
       final response = await client.get(url);
+
       if (response.statusCode == 200) {
         final decodedBody = json.decode(response.body);
         return AnnouncementModel.fromJson(decodedBody);

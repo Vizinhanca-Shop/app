@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart' as intl;
 import 'package:vizinhanca_shop/data/models/announcement_address_model.dart';
 import 'package:vizinhanca_shop/data/models/category_model.dart';
 import 'package:vizinhanca_shop/data/models/user_model.dart';
@@ -60,5 +61,12 @@ class AnnouncementModel {
       category: CategoryModel(id: '', name: ''),
       address: AnnouncementAddressModel.empty(),
     );
+  }
+
+  String formattedPrice() {
+    return intl.NumberFormat.currency(
+      locale: 'pt_BR',
+      symbol: 'R\$',
+    ).format(price / 100);
   }
 }

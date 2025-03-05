@@ -19,10 +19,11 @@ class LoginRepository {
 
   Future<void> login(String accessToken) async {
     final url = Uri.parse('$baseUrl/api/auth/google-login');
+    print(url);
     final body = {'access_token': accessToken};
-
     try {
       final response = await client.post(url, data: body);
+      print(response.body);
       if (response.statusCode == 200) {
         final decodedBody = json.decode(response.body);
         final token = decodedBody['token'];

@@ -1,15 +1,18 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:vizinhanca_shop/data/models/announcement_address_model.dart';
 import 'package:vizinhanca_shop/data/models/create_announcement_model.dart';
 import 'package:vizinhanca_shop/features/my_announcement/viewmodels/my_announcements_view_model.dart';
 import 'package:vizinhanca_shop/routes/app_routes.dart';
+import 'package:vizinhanca_shop/shared/currency_input_formatter.dart';
 import 'package:vizinhanca_shop/shared/custom_select.dart';
 import 'package:vizinhanca_shop/shared/custom_text_form_field.dart';
 import 'package:vizinhanca_shop/shared/header.dart';
 import 'package:vizinhanca_shop/theme/app_colors.dart';
+import 'package:vizinhanca_shop/utils/parse_price.dart';
 
 class NewAnnouncementView extends StatefulWidget {
   final MyAnnouncementsViewModel viewModel;
@@ -119,7 +122,7 @@ class _NewAnnouncementViewState extends State<NewAnnouncementView> {
       final CreateAnnouncementModel announcement = CreateAnnouncementModel(
         name: _nameController.text,
         description: _descriptionController.text,
-        price: int.parse(_priceController.text),
+        price: parsePrice(_priceController.text),
         address: AnnouncementAddressModel(
           latitude: coordinates['latitude']!.toString(),
           longitude: coordinates['longitude']!.toString(),
@@ -195,7 +198,7 @@ class _NewAnnouncementViewState extends State<NewAnnouncementView> {
               CustomTextFormField(
                 controller: _priceController,
                 labelText: 'Preço',
-                hintText: 'Preço do anúncio',
+                hintText: 'R\$ 0,00',
                 keyboardType: TextInputType.number,
                 floatingLabelBehavior: FloatingLabelBehavior.always,
                 validator:
@@ -203,6 +206,7 @@ class _NewAnnouncementViewState extends State<NewAnnouncementView> {
                         value == null || value.isEmpty
                             ? 'Por favor, insira o preço do anúncio'
                             : null,
+                inputFormatters: [CurrencyInputFormatter()],
               ),
               const SizedBox(height: 20),
               CustomSelect(
@@ -218,6 +222,11 @@ class _NewAnnouncementViewState extends State<NewAnnouncementView> {
                       );
                     }).toList(),
                 onChanged: (value) {},
+                validator:
+                    (value) =>
+                        value == null || value.isEmpty
+                            ? 'Por favor, selecione a categoria'
+                            : null,
               ),
               const SizedBox(height: 30),
 
@@ -233,7 +242,7 @@ class _NewAnnouncementViewState extends State<NewAnnouncementView> {
               CustomTextFormField(
                 controller: _cepController,
                 labelText: 'CEP',
-                hintText: 'Digite o CEP',
+                hintText: 'Digite o CEP (somente números)',
                 keyboardType: TextInputType.number,
                 floatingLabelBehavior: FloatingLabelBehavior.always,
                 onChanged: (value) {
@@ -246,6 +255,10 @@ class _NewAnnouncementViewState extends State<NewAnnouncementView> {
                         value == null || value.isEmpty
                             ? 'Por favor, insira o CEP'
                             : null,
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                  LengthLimitingTextInputFormatter(8),
+                ],
               ),
               const SizedBox(height: 20),
               CustomTextFormField(
