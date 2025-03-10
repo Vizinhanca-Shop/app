@@ -10,6 +10,7 @@ import 'package:vizinhanca_shop/features/home/views/widgets/home_category_list.d
 import 'package:vizinhanca_shop/features/home/views/widgets/home_header.dart';
 import 'package:vizinhanca_shop/features/home/views/widgets/search_field_header.dart';
 import 'package:vizinhanca_shop/routes/app_routes.dart';
+import 'package:vizinhanca_shop/theme/app_colors.dart';
 
 class HomeView extends StatefulWidget {
   final HomeViewModel homeViewModel;
@@ -65,6 +66,10 @@ class _HomeViewState extends State<HomeView> {
     });
   }
 
+  Future<void> _handleRefresh() async {
+    await widget.homeViewModel.handleGetAnnouncements(refresh: true);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -102,31 +107,36 @@ class _HomeViewState extends State<HomeView> {
         toolbarHeight: 0,
         scrolledUnderElevation: 0,
       ),
-      body: CustomScrollView(
-        controller: _scrollController,
-        slivers: [
-          HomeHeader(
-            addressViewModel: widget.addressViewModel,
-            onAddressSearch: _handleAddressSearch,
-            searchController: _searchController,
-            onSearch: _handleSearch,
-            onOpenFilters: _handleOpenFilters,
-          ),
-          SliverPersistentHeader(
-            pinned: true,
-            delegate: SearchFieldHeader(
+      body: RefreshIndicator(
+        onRefresh: _handleRefresh,
+        color: AppColors.primary,
+        backgroundColor: Colors.white,
+        child: CustomScrollView(
+          controller: _scrollController,
+          slivers: [
+            HomeHeader(
+              addressViewModel: widget.addressViewModel,
+              onAddressSearch: _handleAddressSearch,
               searchController: _searchController,
               onSearch: _handleSearch,
               onOpenFilters: _handleOpenFilters,
-              isPinned: _isSearchPinned,
             ),
-          ),
-          HomeCategoryList(
-            homeViewModel: widget.homeViewModel,
-            onCategoryChange: _handleCategoryChange,
-          ),
-          HomeAnnouncementGrid(homeViewModel: widget.homeViewModel),
-        ],
+            SliverPersistentHeader(
+              pinned: true,
+              delegate: SearchFieldHeader(
+                searchController: _searchController,
+                onSearch: _handleSearch,
+                onOpenFilters: _handleOpenFilters,
+                isPinned: _isSearchPinned,
+              ),
+            ),
+            HomeCategoryList(
+              homeViewModel: widget.homeViewModel,
+              onCategoryChange: _handleCategoryChange,
+            ),
+            HomeAnnouncementGrid(homeViewModel: widget.homeViewModel),
+          ],
+        ),
       ),
     );
   }

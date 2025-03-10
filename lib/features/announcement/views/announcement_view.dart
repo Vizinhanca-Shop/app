@@ -95,7 +95,12 @@ class _AnnouncementViewState extends State<AnnouncementView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ImagesCarousel(images: widget.viewModel.announcement.images),
+                Hero(
+                  tag: widget.viewModel.announcement.id,
+                  child: ImagesCarousel(
+                    images: widget.viewModel.announcement.images,
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 20,

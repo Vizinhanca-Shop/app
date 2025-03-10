@@ -40,7 +40,18 @@ class HomeViewModel extends ChangeNotifier {
   String get selectedOrder => _selectedOrder;
   CategoryModel? get selectedCategory => _selectedCategory;
 
-  Future<void> handleGetAnnouncements({bool loadMore = false}) async {
+  Future<void> handleGetAnnouncements({
+    bool loadMore = false,
+    bool refresh = false,
+  }) async {
+    if (refresh) {
+      _currentPage = 1;
+      _hasMore = true;
+      _isLoading = true;
+
+      notifyListeners();
+    }
+
     if (loadMore && !_hasMore) return;
 
     notifyListeners();

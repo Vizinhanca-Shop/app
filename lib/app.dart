@@ -17,6 +17,7 @@ class App extends StatelessWidget {
         viewInsets: EdgeInsets.zero,
       ),
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         navigatorKey: AppRoutes.navigatorKey,
         title: 'Vizinhança Shop',
         theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: true),

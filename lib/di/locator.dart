@@ -68,6 +68,7 @@ Future<void> setupLocator() async {
     () => LoginViewModel(
       loginRepository: locator<LoginRepository>(),
       authService: locator<AuthService>(),
+      mainViewModel: locator<MainViewModel>(),
     ),
   );
   locator.registerLazySingleton<AddressViewModel>(

@@ -42,7 +42,7 @@ class HomeAnnouncementGrid extends StatelessWidget {
               crossAxisCount: 2,
               childAspectRatio: 0.8,
               crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
+              mainAxisSpacing: 10,
             ),
             delegate: SliverChildBuilderDelegate((context, index) {
               final announcement = homeViewModel.announcements[index];

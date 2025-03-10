@@ -1,5 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:vizinhanca_shop/data/models/announcement_model.dart';
 import 'package:vizinhanca_shop/features/announcement/views/announcement_view.dart';
 import 'package:vizinhanca_shop/routes/app_routes.dart';
@@ -31,14 +33,40 @@ class AnnouncementPreview extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  height: 120,
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(Radius.circular(8)),
-                    image: DecorationImage(
-                      image: NetworkImage(announcement.images.first),
-                      fit: BoxFit.cover,
-                    ),
+                Hero(
+                  tag: announcement.id,
+                  child: CachedNetworkImage(
+                    imageUrl: announcement.images.first,
+                    imageBuilder:
+                        (context, imageProvider) => Container(
+                          height: 140,
+                          decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(8),
+                            ),
+                            image: DecorationImage(
+                              image: imageProvider,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                    placeholder:
+                        (context, url) => Shimmer.fromColors(
+                          baseColor: Colors.white.withValues(alpha: 0.5),
+                          highlightColor: Colors.white.withValues(alpha: 0.2),
+                          child: Container(
+                            height: 140,
+                            decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(8),
+                              ),
+                              color: Colors.white.withValues(alpha: 0.5),
+                            ),
+                          ),
+                        ),
+                    errorWidget:
+                        (context, url, error) =>
+                            const Icon(Icons.error, color: Colors.red),
                   ),
                 ),
                 Column(
@@ -49,8 +77,18 @@ class AnnouncementPreview extends StatelessWidget {
                       children: [
                         CircleAvatar(
                           radius: 14,
-                          backgroundImage: NetworkImage(
-                            announcement.seller.avatar,
+                          child: ClipOval(
+                            child: CachedNetworkImage(
+                              imageUrl: announcement.seller.avatar,
+                              placeholder:
+                                  (context, url) => const Icon(
+                                    Icons.person,
+                                    color: Colors.grey,
+                                  ),
+                              errorWidget:
+                                  (context, url, error) =>
+                                      const Icon(Icons.error),
+                            ),
                           ),
                         ),
                         const SizedBox(width: 4),

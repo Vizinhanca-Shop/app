@@ -17,17 +17,20 @@ class LoginRepository {
 
   String get baseUrl => appConfig.baseUrl;
 
-  Future<void> login(String accessToken) async {
+  Future<Map<String, dynamic>> login(String accessToken) async {
     final url = Uri.parse('$baseUrl/api/auth/google-login');
-    print(url);
+
     final body = {'access_token': accessToken};
+
     try {
       final response = await client.post(url, data: body);
-      print(response.body);
+
       if (response.statusCode == 200) {
+        print(response.body);
         final decodedBody = json.decode(response.body);
         final token = decodedBody['token'];
         await localStorageService.setString('token', token);
+        return decodedBody;
       } else {
         throw Exception('Failed to login');
       }

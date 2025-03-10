@@ -1,5 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:vizinhanca_shop/theme/app_colors.dart';
 
@@ -33,10 +35,32 @@ class _ImagesCarouselState extends State<ImagesCarousel> {
         CarouselSlider(
           items:
               widget.images.map((image) {
-                return Image.network(
-                  image,
-                  width: MediaQuery.of(context).size.width,
-                  fit: BoxFit.cover,
+                return CachedNetworkImage(
+                  imageUrl: image,
+                  imageBuilder:
+                      (context, imageProvider) => Container(
+                        height: 140,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: imageProvider,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                  placeholder:
+                      (context, url) => Shimmer.fromColors(
+                        baseColor: Colors.white.withValues(alpha: 0.5),
+                        highlightColor: Colors.white.withValues(alpha: 0.2),
+                        child: Container(
+                          height: 140,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.5),
+                          ),
+                        ),
+                      ),
+                  errorWidget:
+                      (context, url, error) =>
+                          const Icon(Icons.error, color: Colors.red),
                 );
               }).toList(),
           carouselController: _controller,

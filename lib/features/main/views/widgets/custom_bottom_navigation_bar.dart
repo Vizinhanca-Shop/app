@@ -33,26 +33,29 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         bottomNavigationBar: ListenableBuilder(
           listenable: widget.mainViewModel,
           builder: (context, snapshot) {
-            return BottomNavigationBar(
-              backgroundColor: Colors.white,
-              selectedItemColor: AppColors.primary,
-              unselectedItemColor: Colors.grey,
-              onTap: widget.mainViewModel.setIndex,
-              currentIndex: widget.mainViewModel.currentIndex,
-              items: [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home_rounded),
-                  label: 'Início',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.shopping_cart_rounded),
-                  label: 'Meus anúncios',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.menu_rounded),
-                  label: 'Menu',
-                ),
-              ],
+            return SizedBox(
+              height: 80,
+              child: BottomNavigationBar(
+                backgroundColor: Colors.white,
+                selectedItemColor: AppColors.primary,
+                unselectedItemColor: Colors.grey,
+                onTap: widget.mainViewModel.setIndex,
+                currentIndex: widget.mainViewModel.currentIndex,
+                items: [
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.home_rounded),
+                    label: 'Início',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.shopping_cart_rounded),
+                    label: 'Meus anúncios',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.menu_rounded),
+                    label: 'Menu',
+                  ),
+                ],
+              ),
             );
           },
         ),

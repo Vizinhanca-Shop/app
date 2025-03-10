@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:vizinhanca_shop/data/models/announcement_model.dart';
 
 class MyAnnouncementPreview extends StatelessWidget {
@@ -33,11 +35,42 @@ class MyAnnouncementPreview extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
-              child: Image.network(
-                announcement.images.first,
+              child: SizedBox(
                 width: 100,
                 height: 100,
-                fit: BoxFit.cover,
+                child: CachedNetworkImage(
+                  imageUrl: announcement.images.first,
+                  imageBuilder:
+                      (context, imageProvider) => Container(
+                        height: 140,
+                        decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(8),
+                          ),
+                          image: DecorationImage(
+                            image: imageProvider,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                  placeholder:
+                      (context, url) => Shimmer.fromColors(
+                        baseColor: Colors.white.withValues(alpha: 0.5),
+                        highlightColor: Colors.white.withValues(alpha: 0.2),
+                        child: Container(
+                          height: 140,
+                          decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(8),
+                            ),
+                            color: Colors.white.withValues(alpha: 0.5),
+                          ),
+                        ),
+                      ),
+                  errorWidget:
+                      (context, url, error) =>
+                          const Icon(Icons.error, color: Colors.red),
+                ),
               ),
             ),
             const SizedBox(width: 16),

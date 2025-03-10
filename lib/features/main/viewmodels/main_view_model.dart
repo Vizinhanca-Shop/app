@@ -8,6 +8,7 @@ import 'package:vizinhanca_shop/features/my_announcement/views/my_announcements_
 import 'package:vizinhanca_shop/features/home/viewmodels/home_view_model.dart';
 import 'package:vizinhanca_shop/features/home/views/home_view.dart';
 import 'package:vizinhanca_shop/features/profile/viewmodels/profile_view_model.dart';
+import 'package:vizinhanca_shop/routes/app_routes.dart';
 
 class MainViewModel extends ChangeNotifier {
   int _currentIndex = 0;
@@ -37,6 +38,14 @@ class MainViewModel extends ChangeNotifier {
 
   void navigateToHome() {
     _currentIndex = 0;
+    notifyListeners();
+  }
+
+  void navigateToProfile() {
+    _currentIndex = 2;
+    Navigator.of(
+      AppRoutes.navigatorKey.currentContext!,
+    ).pushNamed(AppRoutes.profile);
     notifyListeners();
   }
 }
