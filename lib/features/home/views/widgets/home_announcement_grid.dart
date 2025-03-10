@@ -36,11 +36,16 @@ class HomeAnnouncementGrid extends StatelessWidget {
         }
 
         return SliverPadding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.only(
+            top: 8,
+            bottom: 140,
+            left: 20,
+            right: 20,
+          ),
           sliver: SliverGrid(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              childAspectRatio: 0.8,
+              childAspectRatio: 0.7,
               crossAxisSpacing: 16,
               mainAxisSpacing: 10,
             ),
