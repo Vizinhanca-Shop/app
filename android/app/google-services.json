@@ -20,6 +20,14 @@
             "package_name": "com.app.vizinhanca_shop",
             "certificate_hash": "17475c5b9b9ca114c4f21bb6442477e5fdd0f039"
           }
+        },
+        {
+          "client_id": "642008022892-ufa99o67j14dapqt8ut2pdvc24em1io4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.vizinhanca_shop",
+            "certificate_hash": "bd28c7305e55a3fb1049dc5a7a242b01f4765297"
+          }
         }
       ],
       "api_key": [
@@ -29,7 +37,15 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "642008022892-rgr5jgq65qj7k82g484sej76sg6n5u0f.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.app.vizinhancaShop"
+              }
+            }
+          ]
         }
       }
     }
