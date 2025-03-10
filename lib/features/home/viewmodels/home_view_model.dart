@@ -25,10 +25,10 @@ class HomeViewModel extends ChangeNotifier {
     required AddressViewModel addressViewModel,
   }) : _repository = repository,
        _addressViewModel = addressViewModel {
-    _addressViewModel.setInitialAddress();
     _addressViewModel.addListener(() {
       handleGetAnnouncements();
     });
+    _addressViewModel.setInitialAddress();
   }
 
   List<AnnouncementModel> get announcements => _announcements;
