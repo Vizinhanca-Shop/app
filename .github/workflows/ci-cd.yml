@@ -45,7 +45,7 @@ jobs:
 
       - name: Configurar keystore
         run: |
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/vizinhanca-shop-keystore.jks
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/vizinhanca-shop-keystore.jks
           echo "storeFile=vizinhanca-shop-keystore.jks" >> android/key.properties
           echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
           echo "storePassword=${{ secrets.STORE_PASSWORD }}" >> android/key.properties
