@@ -4,3 +4,8 @@
 -keep class io.flutter.view.** { *; }
 -keep class io.flutter.** { *; }
 -keep class io.flutter.plugins.** { *; }
+-keep class com.google.android.play.core.splitcompat.SplitCompatApplication { *; }
+-keep class com.google.android.play.core.splitinstall.SplitInstallException { *; }
+-keep class com.google.android.play.core.tasks.OnFailureListener { *; }
+-keep class com.google.android.play.core.tasks.OnSuccessListener { *; }
+-keep class com.google.android.play.core.tasks.Task { *; }
