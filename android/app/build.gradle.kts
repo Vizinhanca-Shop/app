@@ -62,7 +62,7 @@ android {
 }
 
 dependencies {
-    implementation("com.google.android.play:core-ktx:2.0.0")
+    implementation("com.google.android.play:core-ktx:1.8.1")
 }
 
 
