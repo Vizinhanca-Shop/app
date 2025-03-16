@@ -43,3 +43,9 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Keystore files
+*.jks
+*.keystore
+**/android/key.properties
+vizinhanca-shop-29a8d7fe9a20.json
