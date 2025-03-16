@@ -82,7 +82,10 @@ jobs:
           path: build/app/outputs/bundle/release/
 
       - name: Configurar credenciais do Google Play
-        run: echo "${{ secrets.PLAY_STORE_CONFIG_JSON }}" > play-store-config.json
+        run: |
+          cat <<EOF > play-store-config.json
+          ${{ secrets.PLAY_STORE_CONFIG_JSON }}
+          EOF
 
       - name: Verificar conteúdo do JSON
         run: cat play-store-config.json
