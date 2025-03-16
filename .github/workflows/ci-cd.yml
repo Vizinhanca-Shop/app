@@ -1,0 +1,133 @@
+name: Flutter CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  test:
+    name: Análise e Testes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.29.0"
+          channel: "stable"
+
+      - name: Instalar dependências
+        run: flutter pub get
+
+      - name: Verificar formatação
+        run: dart format --set-exit-if-changed .
+
+      - name: Analisar código
+        run: flutter analyze
+
+      - name: Executar testes
+        run: flutter test
+
+  build_android:
+    name: Build Android
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.29.0"
+          channel: "stable"
+
+      - name: Instalar dependências
+        run: flutter pub get
+
+      - name: Configurar keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/vizinhanca-shop-keystore.jks
+          echo "storeFile=vizinhanca-shop-keystore.jks" >> android/key.properties
+          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
+          echo "storePassword=${{ secrets.STORE_PASSWORD }}" >> android/key.properties
+          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
+
+      - name: Build app bundle
+        run: flutter build appbundle
+
+      - name: Upload app bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: appbundle
+          path: build/app/outputs/bundle/release/app-release.aab
+
+  deploy_internal:
+    name: Deploy para Track Internal
+    needs: build_android
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/develop'
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.0"
+          bundler-cache: true
+
+      - name: Instalar fastlane
+        run: gem install fastlane
+
+      - name: Baixar app bundle
+        uses: actions/download-artifact@v4.1.9
+        with:
+          name: appbundle
+          path: build/app/outputs/bundle/release/
+
+      - name: Configurar credenciais do Google Play
+        run: |
+          cat <<EOF > play-store-config.json
+          ${{ secrets.PLAY_STORE_CONFIG_JSON }}
+          EOF
+
+      - name: Verificar conteúdo do JSON
+        run: cat play-store-config.json
+
+      - name: Deploy para track Internal
+        run: |
+          fastlane supply \
+          --aab build/app/outputs/bundle/release/app-release.aab \
+          --track internal \
+          --json_key play-store-config.json \
+          --package_name com.app.vizinhanca_shop
+
+  deploy_production:
+    name: Deploy para Production
+    needs: build_android
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      # Mesmos passos do deploy_internal, mas mudando o track para 'production'
+      # Você pode adicionar um passo de aprovação manual aqui
+      - uses: actions/checkout@v3
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.0"
+          bundler-cache: true
+
+      - name: Instalar fastlane
+        run: gem install fastlane
+
+      - name: Baixar app bundle
+        uses: actions/download-artifact@v4.1.9
+        with:
+          name: appbundle
+          path: build/app/outputs/bundle/release/
+
+      - name: Configurar credenciais do Google Play
+        run: echo "${{ secrets.PLAY_STORE_CONFIG_JSON }}" > play-store-config.json
+
+      - name: Deploy para track Production
+        run: |
+          fastlane supply \
+          --aab build/app/outputs/bundle/release/app-release.aab \
+          --track production \
+          --json_key play-store-config.json \
+          --package_name com.app.vizinhanca_shop
