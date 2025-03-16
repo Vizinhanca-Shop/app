@@ -76,7 +76,7 @@ jobs:
         run: gem install fastlane
 
       - name: Baixar app bundle
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v2
         with:
           name: appbundle
           path: build/app/outputs/bundle/release/
@@ -110,7 +110,7 @@ jobs:
         run: gem install fastlane
 
       - name: Baixar app bundle
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v2
         with:
           name: appbundle
           path: build/app/outputs/bundle/release/
