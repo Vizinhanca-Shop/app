@@ -45,7 +45,7 @@ android {
         create("release") {
             keyAlias = keystoreProperties["keyAlias"] as String?
             keyPassword = keystoreProperties["keyPassword"] as String?
-            storeFile = keystoreProperties["storeFile"]?.toString()?.let { File(it) }
+            storeFile = keystoreProperties["storeFile"]?.toString()?.let { rootProject.file(it) }
             storePassword = keystoreProperties["storePassword"] as String?
         }
     }
@@ -53,7 +53,6 @@ android {
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("release")
-
             // Opcionalmente, você pode habilitar minificação
             isMinifyEnabled = true
             isShrinkResources = true
