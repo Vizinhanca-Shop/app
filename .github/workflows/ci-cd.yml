@@ -84,6 +84,9 @@ jobs:
       - name: Configurar credenciais do Google Play
         run: echo "${{ secrets.PLAY_STORE_CONFIG_JSON }}" > play-store-config.json
 
+      - name: Verificar conteúdo do JSON
+        run: cat play-store-config.json
+
       - name: Deploy para track Internal
         run: |
           fastlane supply \
