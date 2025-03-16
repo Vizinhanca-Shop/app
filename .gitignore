@@ -48,4 +48,4 @@ app.*.map.json
 *.jks
 *.keystore
 **/android/key.properties
-vizinhanca-shop-29a8d7fe9a20.json
+play-store-config.json
